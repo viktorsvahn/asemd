@@ -101,9 +101,6 @@ class MolecularDynamics(Configure):
 		# Add output generator to dynamic object for info during run
 		self.dyn.attach(self.print_energy, interval=self.DUMP_INTERVAL)
 
-		#self.save_traj()
-		#self.save_log()
-
 	def nvt(self):
 		"""Sets up a dynamic object for a canonical ensemble simulation using
 		a Langevin thermostat."""
@@ -117,9 +114,6 @@ class MolecularDynamics(Configure):
 
 		# Add output generator to dynamic object for info during run
 		self.dyn.attach(self.print_energy, interval=self.DUMP_INTERVAL)
-
-		#self.save_traj()
-		#self.save_log()
 
 	def npt(self):
 		"""Sets up a dynamic object for an isobaric ensemble simulation using 
@@ -135,7 +129,4 @@ class MolecularDynamics(Configure):
 
 		# Add output generator to dynamic object for info during run
 		self.dyn.attach(self.print_energy, interval=self.DUMP_INTERVAL)
-
-		#self.save_traj()
-		#self.save_log()
 
