@@ -1,0 +1,40 @@
+Global:
+  input structure: structure_file.ext
+  box size: x y z
+  periodic: True
+  log path: logs/
+
+EMIN:
+  optimiser: MDMin
+  steps: 10
+  output: output_file.ext
+  calculator: EMT
+
+NVE:
+  name: test_name
+  temperature: 300
+  time step: 2
+  calculator: def_file (name of python script that defines calculator)
+  steps: 10
+  dump interval: 2
+  output: output_file.traj
+
+NVT:
+  name: asdafdasfadsf
+  temperature: 300
+  time step: 2
+  calculator: EMT
+  steps: 10
+  friction: 0.01
+  dump interval: 2
+  output: output_file.xyz
+
+NPT: 
+  temperature: 300
+  time step: 2
+  stress: False
+  calculator: EMT
+  steps: 10
+  thermostat timescale: 0.01
+  dump interval: 2
+  output: output_file.pdb

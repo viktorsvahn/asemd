@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "asemd"
+version = "1.2"
+description = "CLI for the atomic simulation environment (ASE)."
+readme = {file = "README.md", content-type = "text/markdown"}
+license = {file = "LICENSE"}
+maintainers = [
+    {name = "Viktor Svahn", email="viktor.svahn@kemi.uu.se"}
+]
+
+[project.urls]
+repository = "https://github.com/viktorsvahn/asemd"
+
+[project.scripts]
+asemd = "asemd.__main__:main"

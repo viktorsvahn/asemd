@@ -1,0 +1,54 @@
+# asemd
+`asemd` is a script that allows a user to run molecular dynamics (MD) simulations, using the atomic simulation enviroment (ASE), directly from the terminal. This offers more flexibility when itcomes to running MD simulations using bash scripts without requiring the user to edit the MD scripts. Using this script, it is possible to run an energy minimisation, single-point calculations, NVE, NVT and an NPT ensemble using a single terminal command and an input file.
+
+## Installation
+To install the program, place all files in a folder, run
+```
+cd /local/install/path
+git clone https://github.com/viktorsvahn/asemd.git
+python3 -m pip install -e .
+```
+
+## Running
+Once installed and having generated an input file, the user may run, e.g.,
+```
+asemd NVE input.in (--test)
+```
+to run an NVE simulation using the settings from the input file. The test-flag ensures that neither logs nor structure files are saved.
+
+For additional information surrounding this package, please use
+```
+asemd -h
+```
+which includes a more in-depth user guide.
+
+## Input file
+THe input file is written in the YAML format which is human readable and intuitive. Each input file consist of at least two sections---Global and EMIN/SP/NVE/NVT/NPT. The global section contains global variables such as an input structure, geometry of the simulation enviroment and whether or not periodic boundary conditions are to be used (bool). The next section has information regarding the simulation mode (EMIN or ensemble), written in capital letters. This section includes temperature, time steps, what calculator is going to be used etc. Each section ends with a ':' and all variables underneath it must be indented by 2 or 4 spaces. Variables and values should also be separated by a ':'.
+
+An example of a basic input is:
+```
+Global:
+  input structure: input.pdb
+  box size: 10 10 10
+
+EMIN:
+  optimiser: MDMin
+  calculator: EMT
+  steps: 10
+  output: emin.pdb
+  
+
+SP:
+  calculator: EMT
+  evaluate:
+    - forces
+  output: forces.xyz
+
+NVE:
+  calculator: EMT
+  steps: 10
+  temperature: 300
+  time step: 2
+  output: nve.traj
+```
+The different extensions used in this example shows what possibilitites there are and do not imply any restrictions related to the different modes. Further, **please note** that the EMT calculator is just used as an example and should not really be used for anything other than making sure that the system running.
