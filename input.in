@@ -5,36 +5,36 @@ Global:
   log path: logs/
 
 EMIN:
-  optimiser: MDMin
-  steps: 10
-  output: output_file.ext
+  optimiser: BFGS
   calculator: EMT
+  steps: 10
+  output: emin.pdb
 
 NVE:
-  name: test_name
+  name: Name of run shown in log file
+  calculator: filename (name of python script 'filename.py' that defines a custom calculator)
+  steps: 10
   temperature: 300
   time step: 2
-  calculator: def_file (name of python script that defines calculator)
-  steps: 10
   dump interval: 2
-  output: output_file.traj
+  output: nve.traj
 
 NVT:
-  name: asdafdasfadsf
-  temperature: 300
-  time step: 2
   calculator: EMT
   steps: 10
+  temperature: 300
+  time step: 2
   friction: 0.01
   dump interval: 2
-  output: output_file.xyz
+  output: nvt.traj
 
-NPT: 
-  temperature: 300
-  time step: 2
-  stress: False
+NPT:
   calculator: EMT
   steps: 10
-  thermostat timescale: 0.01
-  dump interval: 2
-  output: output_file.pdb
+  temperature: 300
+  time step: 2
+  thermostat timescale: 0.01  
+  external stress: 2
+  pfactor: 5
+  dump interval: 1
+  output: npt.traj
