@@ -10,6 +10,12 @@ EMIN:
   steps: 10
   output: emin.pdb
 
+SP:
+  calculator: EMT
+  evaluate:
+    - forces
+  output: forces.xyz
+
 NVE:
   name: Name of run shown in log file
   calculator: filename (name of python script 'filename.py' that defines a custom calculator)
