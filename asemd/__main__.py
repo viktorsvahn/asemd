@@ -11,23 +11,6 @@ import copy
 import pandas as pd
 import numpy as np
 
-
-#from ase import units
-#from ase.io import read, iread, write
-#from ase.io.trajectory import Trajectory
-#from ase import Atoms
-
-#from ase.md.velocitydistribution import MaxwellBoltzmannDistribution
-#from ase.md.verlet import VelocityVerlet
-#from ase.md.langevin import Langevin
-#from ase.md.npt import NPT
-#from ase.md import MDLogger
-
-#from ase.calculators.emt import EMT
-#from ase.optimize import BFGS, MDMin, GPMin
-
-
-#from configure import Configure
 import asemd.single_point as sp
 import asemd.energy_min as emin
 import asemd.md as md
