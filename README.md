@@ -50,4 +50,4 @@ NVE:
   time step: 2
   output: nve.traj
 ```
-The different extensions used in this example shows what possibilitites there are and do not imply any restrictions related to the different modes. The order in which parameters appear is arbitrary. Further, **please note** that the EMT calculator is just used as an example and should not really be used for anything other than making sure that the system running.
+The different extensions used in this example shows what possibilitites there are and do not imply any restrictions related to the different modes. The order in which parameters appear is arbitrary. Further, **please note** that the EMT calculator is just used as an example and should not really be used for anything other than making sure that the system runs.
