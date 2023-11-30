@@ -67,7 +67,7 @@ class Configure(object):
 			calculator = EMT()
 		elif arg is not None:
 			print('LOADING CALCULATOR FILE FROM:')
-			print(os.getcwd())
+			print(os.getcwd()+'/'+self.calculator)
 			#path = os.getcwd()
 			#sys.path.append(path)
 			#sys.path.append(self.input_structure)
