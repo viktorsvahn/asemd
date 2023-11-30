@@ -97,6 +97,8 @@ def main():
 			not os.path.exists(path+log_path)):
 			os.makedirs(log_path)
 			#os.makedirs(path+log_path)
+		else:
+			pass
 
 		# Name log file after date and mode
 		log_file = f'{log_path}{time.strftime("%Y%m%d")}_{mode}.log'
