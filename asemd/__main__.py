@@ -27,7 +27,7 @@ input_file = args.input
 
 # Paths
 path = os.getcwd()+'/'
-#sys.path.append(path)
+sys.path.append(path)
 
 # Read input file
 with open(path+input_file, 'r') as f:
@@ -92,10 +92,11 @@ def main():
 	if args.test == False:
 		log_path = global_input['log path']
 		# Create a log dir and save logs if a dit has been specified
-		
+
 		if ('log path' in global_input) and (
 			not os.path.exists(path+log_path)):
-			os.makedirs(path+log_path)
+			os.makedirs(log_path)
+			#os.makedirs(path+log_path)
 
 		# Name log file after date and mode
 		log_file = f'{log_path}{time.strftime("%Y%m%d")}_{mode}.log'
