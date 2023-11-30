@@ -93,14 +93,14 @@ def main():
 		log_path = global_input['log path']
 		# Create a log dir and save logs if a dit has been specified
 
-		if ('log path' in global_input) and (
-			not os.path.exists(path+log_path)):
-			os.makedirs(log_path)
-			#os.makedirs(path+log_path)
-		else:
-			pass
+		if 'log path' in global_input:
+			if not os.path.exists(path+log_path): 
+				os.makedirs(log_path)
+				#os.makedirs(path+log_path)
+			else:
+				pass
 
-		# Name log file after date and mode
+		# Name log file after date and mode		
 		log_file = f'{log_path}{time.strftime("%Y%m%d")}_{mode}.log'
 	else:
 		log_file = None
