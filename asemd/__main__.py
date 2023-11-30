@@ -92,6 +92,7 @@ def main():
 	if args.test == False:
 		log_path = global_input['log path']
 		# Create a log dir and save logs if a dit has been specified
+		
 		if ('log path' in global_input) and (
 			not os.path.exists(path+log_path)):
 			os.makedirs(path+log_path)

@@ -65,7 +65,9 @@ class Configure(object):
 		if arg == (None or 'EMT'):
 			calculator = EMT()
 		elif arg is not None:
-			sys.path.append(self.input_structure)
+			path = os.getcwd()+'/'
+			sys.path.append(path)
+			#sys.path.append(self.input_structure)
 			calculator = __import__(arg)
 		else:
 			print('Missing calculator!')
