@@ -3,6 +3,7 @@
 
 import copy
 import sys
+import os
 
 from ase.io import read, iread, write
 from ase.calculators.emt import EMT
