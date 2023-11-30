@@ -27,7 +27,7 @@ input_file = args.input
 
 # Paths
 path = os.getcwd()+'/'
-sys.path.append(path)
+sys.path.append(path) # Cannot load external calculator module without this!
 
 # Read input file
 with open(path+input_file, 'r') as f:

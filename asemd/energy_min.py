@@ -54,12 +54,22 @@ class EnergyMinimisation(Configure):
 			self.dyn.run(steps=self.STEPS, fmax=self.FMAX)
 
 		# Saves output after obtaining properties
-		self.save_structure()
+		#self.save_structure()
+		self.save_traj()
 
 	def save_structure(self):
 		"""If an output filename has been given, the the output is saved to a
 		file by appending all atoms objects to the file."""
 		if self.output_structure:
 			write(self.output_structure, self.atoms)
+		else:
+			pass
+
+	def save_traj(self):
+		"""Method that generates a trajectory object."""
+		# Generate a trajectory object and attaches it to the dynamic object
+		if self.output_structure:
+			self.traj = Trajectory(self.output_structure, 'w', self.atoms)
+			self.dyn.attach(self.traj.write, interval=self.DUMP_INTERVAL)
 		else:
 			pass
