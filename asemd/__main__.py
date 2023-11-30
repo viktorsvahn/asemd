@@ -95,8 +95,8 @@ def main():
 
 		if 'log path' in global_input:
 			if not os.path.exists(path+log_path): 
-				os.makedirs(log_path)
-				#os.makedirs(path+log_path)
+				#os.makedirs(log_path)
+				os.makedirs(path+log_path)
 			else:
 				pass
 
