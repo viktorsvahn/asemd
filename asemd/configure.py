@@ -71,7 +71,7 @@ class Configure(object):
 			#path = os.getcwd()
 			#sys.path.append(path)
 			#sys.path.append(self.input_structure)
-			calculator = __import__(arg)
+			calculator = __import__(arg).calculator
 		else:
 			print('Missing calculator!')
 			print('''Choose EMT (for testing) or specify a python script that contain all calculator\ndefinitions by including:\n  calculator: EMT/name_of_sctipt\nin the YAML input file.''')
