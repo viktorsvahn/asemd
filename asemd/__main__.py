@@ -261,7 +261,8 @@ def main():
 	# Write input parameters to log file
 	if args.test == False:
 		if log_file is not None:
-			with open(path+log_file, 'a') as f:
+			#with open(path+log_file, 'a') as f:
+			with open(log_file, 'a') as f:
 				print('Input:', file=f)
 				print(param_df, file=f)
 				print(f'\nStarted: {start}\n', file=f)
@@ -278,7 +279,8 @@ def main():
 	# Additional information to log file.
 	if args.test == False:
 		if log_file is not None:
-			with open(path+log_file, 'a') as f:
+			#with open(path+log_file, 'a') as f:
+			with open(log_file, 'a') as f:
 				print(f'\nCompleted: {end} (elapsed time: {end-start})', file=f)
 				print('='*80, file=f)
 
