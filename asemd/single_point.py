@@ -42,7 +42,6 @@ class SinglePoint(Configure):
 		- Momenta
 		- Stress
 		- Velocities"""
-
 		# Checks to see if properties have been assigned correctly in the input
 		if ('evaluate' in self.mode_params) and (self.mode_params['evaluate'] is not None):
 			self.evaluate = set(self.mode_params['evaluate'])
@@ -68,7 +67,6 @@ class SinglePoint(Configure):
 	def acquire_property(self, attribute):
 		"""Evaluates the input structure for the properties specified in the 
 		input."""
-
 		#This is achieved using the getattr-method which concatenates the first
 		#and second arguments as first.second. For example, if first=a and 
 		#second='get_forces', then attr=a.get_forces. The added parenthesis

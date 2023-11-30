@@ -38,8 +38,7 @@ class EnergyMinimisation(Configure):
 	def run(self):
 		"""Runs an energy minimisation using the chosen optimiser.
 
-		The method requires the number step, a maximum force criteria or both."""
-		
+		The method requires the number step, a maximum force criteria or both."""	
 		# Initiate dynamic optimiser object
 		self.dyn = global_vars.get(self.mode_params['optimiser'])(self.atoms)
 		

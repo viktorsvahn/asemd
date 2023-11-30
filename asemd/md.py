@@ -12,7 +12,6 @@ from ase.io import read, write
 from ase import units
 from ase.md import MDLogger
 
-
 from asemd.configure import Configure
 
 # Collects- and appends all local variables to the global variables
@@ -83,9 +82,14 @@ class MolecularDynamics(Configure):
 		
 	def run(self):
 		"""Runs a molecular dynamics simulation under a chosen ensemble."""
+		# Add output generator to dynamic object for info during run
+		self.dyn.attach(self.print_energy, interval=self.DUMP_INTERVAL)
+
+		# Logging
 		self.save_traj()
 		self.save_log()
 
+		# Running
 		self.dyn.run(steps=self.STEPS)
 
 
@@ -98,9 +102,6 @@ class MolecularDynamics(Configure):
 			timestep=self.TIME_STEP*units.fs
 		)
 
-		# Add output generator to dynamic object for info during run
-		self.dyn.attach(self.print_energy, interval=self.DUMP_INTERVAL)
-
 	def nvt(self):
 		"""Sets up a dynamic object for a canonical ensemble simulation using
 		a Langevin thermostat."""
@@ -111,9 +112,6 @@ class MolecularDynamics(Configure):
 			temperature_K=self.TEMPERATURE,
 			friction=self.FRICTION
 		)
-
-		# Add output generator to dynamic object for info during run
-		self.dyn.attach(self.print_energy, interval=self.DUMP_INTERVAL)
 
 	def npt(self):
 		"""Sets up a dynamic object for an isobaric ensemble simulation using 
@@ -126,7 +124,3 @@ class MolecularDynamics(Configure):
 			ttime=self.CHARACTERSISTIC_TIMESCALE*units.fs,
 			externalstress = self.external_stress*units.bar
 		)
-
-		# Add output generator to dynamic object for info during run
-		self.dyn.attach(self.print_energy, interval=self.DUMP_INTERVAL)
-

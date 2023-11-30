@@ -27,7 +27,7 @@ input_file = args.input
 
 # Paths
 path = os.getcwd()+'/'
-sys.path.append(path)
+#sys.path.append(path)
 
 # Read input file
 with open(path+input_file, 'r') as f:
@@ -82,7 +82,7 @@ def main():
 		output_structure = False
 
 	if args.STEPS:
-		STEPS = args.STEPS
+		STEPS = int(args.STEPS)
 		mode_input['steps'] = STEPS
 	elif 'steps' in mode_input:
 		STEPS = mode_input['steps']
@@ -117,7 +117,7 @@ def main():
 			print('''Select optimiser by including:\n  optimiser: BFGS/MDMin/GPMin\nin the YAML input file.''')
 
 		if args.FMAX:
-			FMAX = args.FMAX
+			FMAX = float(args.FMAX)
 			mode_input['fmax'] = FMAX
 		elif 'fmax' in mode_input:
 			FMAX = mode_input['fmax']
@@ -152,7 +152,7 @@ def main():
 		
 		# CLI arguments have priority over the input file as a rule
 		if args.TEMPERATURE:
-			TEMPERATURE = args.TEMPERATURE
+			TEMPERATURE = float(args.TEMPERATURE)
 			mode_input['temperature'] = TEMPERATURE
 		elif 'temperature' in mode_input:
 			TEMPERATURE = mode_input['temperature']
@@ -160,7 +160,7 @@ def main():
 			TEMPERATURE = None
 
 		if args.TIME_STEP:
-			TIME_STEP = args.TIME_STEP
+			TIME_STEP = float(args.TIME_STEP)
 			mode_input['time step'] = TIME_STEP
 		elif 'time step' in mode_input:
 			TIME_STEP = mode_input['time step']
@@ -168,7 +168,7 @@ def main():
 			TIME_STEP = None
 
 		if args.FRICTION:
-			FRICTION = args.FRICTION
+			FRICTION = float(args.FRICTION)
 			mode_input['friction'] = FRICTION
 		elif 'friction' in mode_input:
 			FRICTION = mode_input['friction']
@@ -176,7 +176,7 @@ def main():
 			FRICTION = None
 
 		if args.PFACTOR:
-			PFACTOR = args.PFACTOR
+			PFACTOR = float(args.PFACTOR)
 			mode_input['pfactor'] = PFACTOR
 		elif 'pfactor' in mode_input:
 			PFACTOR = mode_input['pfactor']
@@ -184,7 +184,10 @@ def main():
 			PFACTOR = 1
 
 		if args.external_stress:
-			external_stress = args.external_stress
+			if len(args.external_stress) > 1:
+				external_stress = float(args.external_stress)
+			else:
+				external_stress = list(args.external_stress)
 			mode_input['external stress'] = external_stress
 		elif 'external stress' in mode_input:
 			external_stress = mode_input['external stress']
@@ -192,7 +195,7 @@ def main():
 			external_stress = 1
 
 		if args.CHARACTERSISTIC_TIMESCALE:
-			CHARACTERSISTIC_TIMESCALE = args.CHARACTERSISTIC_TIMESCALE
+			CHARACTERSISTIC_TIMESCALE = float(args.CHARACTERSISTIC_TIMESCALE)
 			mode_input['thermostat timescale'] = CHARACTERSISTIC_TIMESCALE
 		elif 'thermostat timescale' in mode_input:
 			CHARACTERSISTIC_TIMESCALE = mode_input['thermostat timescale']
@@ -200,7 +203,7 @@ def main():
 			CHARACTERSISTIC_TIMESCALE = None
 
 		if args.DUMP_INTERVAL:
-			DUMP_INTERVAL = args.DUMP_INTERVAL
+			DUMP_INTERVAL = int(args.DUMP_INTERVAL)
 			mode_input['dump interval'] = DUMP_INTERVAL
 		elif 'dump interval' in mode_input:
 			DUMP_INTERVAL = mode_input['dump interval']
