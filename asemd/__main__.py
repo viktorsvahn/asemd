@@ -249,7 +249,7 @@ def main():
 	
 	# Stack input variables in a dataframe
 	mode_param_df = pd.DataFrame.from_dict(mode_input, orient='index', columns=[''])
-	global_input.drop('log path')
+	global_input.pop('log path')
 	global_param_df = pd.DataFrame.from_dict(global_input, orient='index', columns=[''])
 	param_df = pd.concat([global_param_df, mode_param_df])
 
