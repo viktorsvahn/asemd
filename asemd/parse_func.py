@@ -111,8 +111,8 @@ thermostat timescale:\tCharacteristic timescale of Nosé-Hoover thermostat (NPT)
 	)
 	parser.add_argument(
 		'--start',
-		dest='TRAJ_START',
-		help='Overrides the starting position of trajectory inputs. If last is to be used, set -1.'
+		dest='STARTING_INDEX',
+		help='Overrides the starting index of trajectory inputs. If starting from last dump, set -1.'
 	)
 
 	parser.add_argument(

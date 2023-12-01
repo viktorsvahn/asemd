@@ -15,13 +15,11 @@ class Configure(object):
 	"""Setup class that carries shared variables and methods, such as calculator 
 	selection and energy output."""
 	def __init__(self,
-			TRAJ_START,
 			mode_params,
 			global_params,
 			input_structure,
 			output_structure
 		):
-		self.TRAJ_START = TRAJ_START
 		self.mode_params = mode_params
 		self.global_params = global_params
 		self.input_structure = input_structure
@@ -39,10 +37,19 @@ class Configure(object):
 		self.pbc = self.global_params['periodic']
 		size = global_params['box size'].split(' ')
 		self.size = [float(s) for s in size]
+		if 'starting index' in self.global_params
+			self.STARTING_INDEX = self.global_params['starting index']
+		else:
+			self.STARTING_INDEX = -1
 
+		# Input will only be read as a traj if name includes correct extension
+		# Otherwise it will be treated as a .pdb or .xyz file that may, or may
+		# not, include several structures. If this attempt fails, an error is
+		# raised, implying that the input may be a .traj file regardless of its
+		# extension.
 		if 'traj' in self.input_structure:
 			# If file is trajecory, input
-			self.atoms = Trajectory(self.input_structure)[self.TRAJ_START]
+			self.atoms = Trajectory(self.input_structure)[self.STARTING_INDEX]
 			self.atoms.calc = self.acquire_calc(self.calculator)
 			self.atoms.set_cell(self.size)
 			self.atoms.set_pbc(self.pbc)
@@ -50,6 +57,7 @@ class Configure(object):
 			# Reads all structures in an atoms object into a list of structures
 			atoms = read(self.input_structure, ':')
 			self.num_structures = len(atoms)
+
 			if self.num_structures > 1:
 				#self.atoms = copy.deepcopy(atoms)
 				self.atoms = atoms
