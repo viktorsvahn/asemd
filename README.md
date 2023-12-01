@@ -6,7 +6,7 @@ To install the program, place all files in a folder, run
 ```
 cd /local/install/path
 git clone https://github.com/viktorsvahn/asemd.git
-python3 -m pip install -e .
+python3 -m pip install .
 ```
 
 ## Running
