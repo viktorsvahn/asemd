@@ -256,7 +256,10 @@ def main():
 	global_param_df = pd.DataFrame.from_dict(global_input, orient='index', columns=[''])
 	param_df = pd.concat([global_param_df, mode_param_df])
 
-	print(f'Mode: {mode} ({modes[mode]})')
+	if (mode == 'NPT') and (PFACTOR == None):
+		print(f'Mode: NVT ({modes['NVT']} using a Nosé-Hoover thermostat.)')
+	else:
+		print(f'Mode: {mode} ({modes[mode]})')
 	if args.test:
 		print('Running in test mode. No logs or outputs will be saved.')
 	print('\nInput:')
