@@ -44,7 +44,7 @@ global_input = inp['Global']
 global_vars = globals().copy()
 global_vars.update(locals())
 
-
+# Mapping between input mode and class name for each relevant ASE-object
 ensemble_methods = {
 	'NVE': 'VelocityVerlet',
 	'NVT': 'Langevin',
@@ -258,7 +258,7 @@ def main():
 	param_df = pd.concat([global_param_df, mode_param_df])
 
 	if (mode == 'NPT') and (PFACTOR == None):
-		print(f'Mode: NVT ({modes['NVT']} using a Nosé-Hoover thermostat.)')
+		print(f'Mode: NVT (Canonical ensemble using a Nosé-Hoover thermostat.)')
 	else:
 		print(f'Mode: {mode} ({modes[mode]})')
 	if args.test:
