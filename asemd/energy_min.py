@@ -50,6 +50,7 @@ class EnergyMinimisation(Configure):
 		
 		# Logging
 		self.save_traj()
+		self.dyn.attach(self.print_energy, interval=self.DUMP_INTERVAL)
 		
 		#print('Starting energy:')
 		#self.print_energy()
