@@ -257,8 +257,7 @@ def main():
 	if args.test:
 		print('Running in test mode. No logs or outputs will be saved.')
 	print('\nInput:')
-	print(global_param_df)
-	print(mode_param_df, '\n')
+	print(param_df, '\n')
 
 	start = datetime.datetime.now()
 	print(f'\nStarted: {start}\n')
@@ -269,8 +268,7 @@ def main():
 			with open(log_file, 'a') as f:
 				print('='*80, file=f)
 				print('Input:', file=f)
-				print(global_param_df, file=f)
-				print(mode_param_df, file=f)
+				print(param_df, file=f)
 				print(f'\nStarted: {start}\n', file=f)
 
 
