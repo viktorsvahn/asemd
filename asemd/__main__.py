@@ -90,12 +90,12 @@ def main():
 		STEPS = None
 
 	if args.DUMP_INTERVAL:
-			DUMP_INTERVAL = int(args.DUMP_INTERVAL)
-			mode_input['dump interval'] = DUMP_INTERVAL
-		elif 'dump interval' in mode_input:
-			DUMP_INTERVAL = mode_input['dump interval']
-		else:
-			DUMP_INTERVAL = 1
+		DUMP_INTERVAL = int(args.DUMP_INTERVAL)
+		mode_input['dump interval'] = DUMP_INTERVAL
+	elif 'dump interval' in mode_input:
+		DUMP_INTERVAL = mode_input['dump interval']
+	else:
+		DUMP_INTERVAL = 1
 
 	if args.test == False:
 		log_path = global_input['log path']
