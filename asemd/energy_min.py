@@ -29,6 +29,7 @@ class EnergyMinimisation(Configure):
 			STEPS=None,
 			FMAX=None,
 			DUMP_INTERVAL=1,
+			log_file=None,
 			*args
 		):
 		super().__init__(*args)
@@ -36,6 +37,7 @@ class EnergyMinimisation(Configure):
 		self.STEPS = STEPS
 		self.FMAX= FMAX
 		self.DUMP_INTERVAL = DUMP_INTERVAL
+		self.log_file = log_file
 
 
 	def run(self):
@@ -43,7 +45,7 @@ class EnergyMinimisation(Configure):
 
 		The method requires the number step, a maximum force criteria or both."""	
 		# Initiate dynamic optimiser object
-		self.dyn = global_vars.get(self.mode_params['optimiser'])(self.atoms)
+		self.dyn = global_vars.get(self.mode_params['optimiser'])(self.atoms, logile=self.log_file)
 		
 		# Logging
 		self.save_traj()
