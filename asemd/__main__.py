@@ -195,7 +195,7 @@ def main():
 		elif 'pfactor' in mode_input:
 			PFACTOR = float(mode_input['pfactor'])
 		else:
-			PFACTOR = 1
+			PFACTOR = None
 
 		if args.external_stress:
 			if len(args.external_stress) > 1:
