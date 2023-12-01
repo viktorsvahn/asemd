@@ -85,7 +85,7 @@ def main():
 		STEPS = int(args.STEPS)
 		mode_input['steps'] = STEPS
 	elif 'steps' in mode_input:
-		STEPS = mode_input['steps']
+		STEPS = int(mode_input['steps'])
 	else:
 		STEPS = None
 
@@ -93,7 +93,7 @@ def main():
 		DUMP_INTERVAL = int(args.DUMP_INTERVAL)
 		mode_input['dump interval'] = DUMP_INTERVAL
 	elif 'dump interval' in mode_input:
-		DUMP_INTERVAL = mode_input['dump interval']
+		DUMP_INTERVAL = int(mode_input['dump interval'])
 	else:
 		DUMP_INTERVAL = 1
 
@@ -133,7 +133,7 @@ def main():
 			FMAX = float(args.FMAX)
 			mode_input['fmax'] = FMAX
 		elif 'fmax' in mode_input:
-			FMAX = mode_input['fmax']
+			FMAX = float(mode_input['fmax'])
 		else:
 			FMAX = None
 
@@ -169,7 +169,7 @@ def main():
 			TEMPERATURE = float(args.TEMPERATURE)
 			mode_input['temperature'] = TEMPERATURE
 		elif 'temperature' in mode_input:
-			TEMPERATURE = mode_input['temperature']
+			TEMPERATURE = float(mode_input['temperature'])
 		else:
 			TEMPERATURE = None
 
@@ -177,7 +177,7 @@ def main():
 			TIME_STEP = float(args.TIME_STEP)
 			mode_input['time step'] = TIME_STEP
 		elif 'time step' in mode_input:
-			TIME_STEP = mode_input['time step']
+			TIME_STEP = float(mode_input['time step'])
 		else:
 			TIME_STEP = None
 
@@ -185,7 +185,7 @@ def main():
 			FRICTION = float(args.FRICTION)
 			mode_input['friction'] = FRICTION
 		elif 'friction' in mode_input:
-			FRICTION = mode_input['friction']
+			FRICTION = float(mode_input['friction'])
 		else:
 			FRICTION = None
 
@@ -193,18 +193,21 @@ def main():
 			PFACTOR = float(args.PFACTOR)
 			mode_input['pfactor'] = PFACTOR
 		elif 'pfactor' in mode_input:
-			PFACTOR = mode_input['pfactor']
+			PFACTOR = float(mode_input['pfactor'])
 		else:
 			PFACTOR = 1
 
 		if args.external_stress:
 			if len(args.external_stress) > 1:
-				external_stress = float(args.external_stress)
-			else:
 				external_stress = list(args.external_stress)
+			else:
+				external_stress = float(args.external_stress)
 			mode_input['external stress'] = external_stress
 		elif 'external stress' in mode_input:
-			external_stress = mode_input['external stress']
+			if len(args.external_stress) > 1:
+				external_stress = list(mode_input['external stress'])
+			else:
+				external_stress = float(mode_input['external stress'])
 		else:
 			external_stress = 1
 
@@ -212,7 +215,7 @@ def main():
 			CHARACTERSISTIC_TIMESCALE = float(args.CHARACTERSISTIC_TIMESCALE)
 			mode_input['thermostat timescale'] = CHARACTERSISTIC_TIMESCALE
 		elif 'thermostat timescale' in mode_input:
-			CHARACTERSISTIC_TIMESCALE = mode_input['thermostat timescale']
+			CHARACTERSISTIC_TIMESCALE = float(mode_input['thermostat timescale'])
 		else:
 			CHARACTERSISTIC_TIMESCALE = None
 
