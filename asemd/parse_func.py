@@ -109,6 +109,11 @@ thermostat timescale:\tCharacteristic timescale of Nosé-Hoover thermostat (NPT)
 		dest='DUMP_INTERVAL',
 		help='Overrides the dump interval in the input file.'
 	)
+	parser.add_argument(
+		'--start',
+		dest='TRAJ_START',
+		help='Overrides the starting position of trajectory inputs. If last is to be used, set -1.'
+	)
 
 	parser.add_argument(
 		'--steps',

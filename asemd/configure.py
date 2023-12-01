@@ -6,6 +6,7 @@ import sys
 import os
 
 from ase.io import read, iread, write
+from ase.io.trajectory import Trajectory
 from ase.calculators.emt import EMT
 from ase import units
 
@@ -14,11 +15,13 @@ class Configure(object):
 	"""Setup class that carries shared variables and methods, such as calculator 
 	selection and energy output."""
 	def __init__(self,
+			TRAJ_START,
 			mode_params,
 			global_params,
 			input_structure,
 			output_structure
 		):
+		self.TRAJ_START = TRAJ_START
 		self.mode_params = mode_params
 		self.global_params = global_params
 		self.input_structure = input_structure
@@ -37,8 +40,13 @@ class Configure(object):
 		size = global_params['box size'].split(' ')
 		self.size = [float(s) for s in size]
 
-		# Reads all structures in an atoms object into a list of structures
-		atoms = read(self.input_structure, ':')
+		if 'traj' in self.input_structure:
+			# If file is trajecory, input
+			atoms = Trajectory(self.input_structure)[-1]
+		else:
+			# Reads all structures in an atoms object into a list of structures
+			atoms = read(self.input_structure, ':')
+		
 		self.num_structures = len(atoms)
 		if self.num_structures > 1:
 			#self.atoms = copy.deepcopy(atoms)
@@ -48,6 +56,7 @@ class Configure(object):
 				a.set_cell(self.size)
 				a.set_pbc(self.pbc)
 		else:
+			# If list has length 1, atoms object is first, and only, element
 			#self.atoms = copy.deepcopy(atoms[0])
 			self.atoms = atoms[0]
 			self.atoms.calc = self.acquire_calc(self.calculator)

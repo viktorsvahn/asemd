@@ -97,6 +97,14 @@ def main():
 	else:
 		DUMP_INTERVAL = 1
 
+	if args.TRAJ_START:
+		TRAJ_START = int(args.TRAJ_START)
+		mode_input['trajectory start'] = TRAJ_START
+	elif 'trajectory start' in mode_input:
+		TRAJ_START = mode_input['trajectory start']
+	else:
+		TRAJ_START = -1
+
 	if args.test == False:
 		log_path = global_input['log path']
 		# Create a log dir and save logs if a dit has been specified
@@ -144,6 +152,7 @@ def main():
 			STEPS,
 			FMAX,
 			DUMP_INTERVAL,
+			TRAJ_START,
 			mode_input,
 			global_input,
 			path+input_structure,
@@ -155,6 +164,7 @@ def main():
 	elif mode == 'SP':
 		# Initiate a single point caluclation object
 		setup = sp.SinglePoint(
+			TRAJ_START,
 			mode_input,
 			global_input,
 			path+input_structure,
@@ -228,6 +238,7 @@ def main():
 			DUMP_INTERVAL,
 			external_stress,
 			log_file,
+			TRAJ_START,
 			mode_input,
 			global_input,
 			path+input_structure,
@@ -284,7 +295,6 @@ def main():
 			#with open(path+log_file, 'a') as f:
 			with open(log_file, 'a') as f:
 				print(f'\nCompleted: {end} (elapsed time: {end-start})\n', file=f)
-				
 
 
 if __name__ == '__main__':
