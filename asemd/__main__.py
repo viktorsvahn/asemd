@@ -193,7 +193,7 @@ def main():
 		if args.PFACTOR:
 			PFACTOR = float(args.PFACTOR)
 			mode_input['pfactor'] = PFACTOR
-		elif 'pfactor' in mode_input:
+		elif ('pfactor' in mode_input) and (mode_input['pfactor'] is not None):
 			PFACTOR = float(mode_input['pfactor'])
 		else:
 			PFACTOR = None
