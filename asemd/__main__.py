@@ -250,7 +250,8 @@ def main():
 	# Stack input variables in a dataframe
 	mode_param_df = pd.DataFrame.from_dict(mode_input, orient='index', columns=[''])
 	global_param_df = pd.DataFrame.from_dict(global_input, orient='index', columns=[''])
-	global_param_df.drop(index='log path')
+	global_param_df.drop('log path')
+	param_df = pd.concat([global_param_df, mode_param_df], ignore_index=True)
 
 	print(f'Mode: {mode} ({modes[mode]})')
 	if args.test:
@@ -265,7 +266,6 @@ def main():
 	# Write input parameters to log file
 	if args.test == False:
 		if log_file is not None:
-			#with open(path+log_file, 'a') as f:
 			with open(log_file, 'a') as f:
 				print('='*80, file=f)
 				print('Input:', file=f)
@@ -283,11 +283,9 @@ def main():
 	print(f'Completed: {end} (elapsed time: {end-start})')
 
 	# Additional information to log file.
-	if args.test == False:
-		if log_file is not None:
-			#with open(path+log_file, 'a') as f:
-			with open(log_file, 'a') as f:
-				print(f'\nCompleted: {end} (elapsed time: {end-start})\n', file=f)
+	if (args.test == False) and (log_file is not None):
+		with open(log_file, 'a') as f:
+			print(f'\nCompleted: {end} (elapsed time: {end-start})\n', file=f)
 
 
 if __name__ == '__main__':
