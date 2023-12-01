@@ -39,6 +39,8 @@ NVT:
 
 GLOBAL INPUT:
 input structure:\tSpecifies the starting structure.
+starting index:\tSpecifies the index used in reading .traj-input structures. 
+			Defaults to -1
 box size:\t\tWidth of the simulation box for x, y and z.
 periodic:\t\tBoolean for periodic boundary conditions.
 log path:\t\tPath to log file.

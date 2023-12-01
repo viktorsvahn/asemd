@@ -37,7 +37,7 @@ class Configure(object):
 		self.pbc = self.global_params['periodic']
 		size = global_params['box size'].split(' ')
 		self.size = [float(s) for s in size]
-		if 'starting index' in self.global_params
+		if 'starting index' in self.global_params:
 			self.STARTING_INDEX = self.global_params['starting index']
 		else:
 			self.STARTING_INDEX = -1
