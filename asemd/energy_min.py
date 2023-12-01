@@ -48,6 +48,9 @@ class EnergyMinimisation(Configure):
 		# Logging
 		self.save_traj()
 		
+		print('Starting energy:')
+		self.print_energy()
+
 		# Run the minimisation
 		if (self.STEPS is None) and (self.FMAX is None):
 			print('No minimisation criteria given!')
@@ -59,8 +62,9 @@ class EnergyMinimisation(Configure):
 		else:
 			self.dyn.run(steps=self.STEPS, fmax=self.FMAX)
 
-		# Saves output after obtaining properties
-		#self.save_structure()
+		print('\nFinal energy:')
+		self.print_energy()
+
 
 	def save_structure(self):
 		"""If an output filename has been given, the the output is saved to a
