@@ -144,6 +144,7 @@ def main():
 			STEPS,
 			FMAX,
 			DUMP_INTERVAL,
+			log_file,
 			mode_input,
 			global_input,
 			path+input_structure,
