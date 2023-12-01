@@ -74,7 +74,7 @@ class MolecularDynamics(Configure):
 		logger = MDLogger(
 			self.dyn,
 			self.atoms,
-			logfile=self.log_file,
+			logfile=self.log_file
 		)
 		self.dyn.attach(
 			logger

@@ -28,7 +28,7 @@ class Configure(object):
 		if ('calculator' not in self.mode_params) or (
 				self.mode_params['calculator'] == None):
 			print('Missing calculator!')
-			print('''Choose EMT (for testing) or specify a python script that contain all calculator\ndefinitions by including:\n  calculator: EMT/name_of_sctipt\nin the YAML input file.''')
+			print('''Choose EMT (for testing) or specify a python script that contains all calculator\ndefinitions by including:\n  calculator: EMT/name_of_script\nin the YAML input file.''')
 		else:
 			self.calculator = self.mode_params['calculator']
 
@@ -65,11 +65,8 @@ class Configure(object):
 		should be passed with the name of the script as an argument."""
 		if arg == (None or 'EMT'):
 			calculator = EMT()
-		elif arg is not None:
-			calculator = __import__(arg).calculator
 		else:
-			print('Missing calculator!')
-			print('''Choose EMT (for testing) or specify a python script that contain all calculator\ndefinitions by including:\n  calculator: EMT/name_of_sctipt\nin the YAML input file.''')
+			calculator = __import__(arg).calculator
 		return calculator
 
 	def print_energy(self):

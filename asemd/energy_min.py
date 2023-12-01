@@ -3,6 +3,7 @@
 
 from ase.optimize import BFGS, MDMin, GPMin
 from ase.io import read, write
+from ase.io.trajectory import Trajectory
 
 from asemd.configure import Configure
 
