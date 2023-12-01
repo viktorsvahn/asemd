@@ -28,7 +28,7 @@ class EnergyMinimisation(Configure):
 			optimiser,
 			STEPS=None,
 			FMAX=None,
-			DUMP_INTERVAL,
+			DUMP_INTERVAL=1,
 			*args
 		):
 		super().__init__(*args)
