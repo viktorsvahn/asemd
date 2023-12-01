@@ -42,26 +42,30 @@ class Configure(object):
 
 		if 'traj' in self.input_structure:
 			# If file is trajecory, input
-			atoms = Trajectory(self.input_structure)[-1]
-		else:
-			# Reads all structures in an atoms object into a list of structures
-			atoms = read(self.input_structure, ':')
-		
-		self.num_structures = len(atoms)
-		if self.num_structures > 1:
-			#self.atoms = copy.deepcopy(atoms)
-			self.atoms = atoms
-			for a in self.atoms:
-				a.calc = self.acquire_calc(self.calculator)
-				a.set_cell(self.size)
-				a.set_pbc(self.pbc)
-		else:
-			# If list has length 1, atoms object is first, and only, element
-			#self.atoms = copy.deepcopy(atoms[0])
-			self.atoms = atoms[0]
+			self.atoms = Trajectory(self.input_structure)[self.TRAJ_START]
 			self.atoms.calc = self.acquire_calc(self.calculator)
 			self.atoms.set_cell(self.size)
 			self.atoms.set_pbc(self.pbc)
+		else:
+			# Reads all structures in an atoms object into a list of structures
+			atoms = read(self.input_structure, ':')
+			self.num_structures = len(atoms)
+			if self.num_structures > 1:
+				#self.atoms = copy.deepcopy(atoms)
+				self.atoms = atoms
+				for a in self.atoms:
+					a.calc = self.acquire_calc(self.calculator)
+					a.set_cell(self.size)
+					a.set_pbc(self.pbc)
+			elif self.num_structures == 1:
+				# If list has length 1, atoms object is first, and only, element
+				#self.atoms = copy.deepcopy(atoms[0])
+				self.atoms = atoms[0]
+				self.atoms.calc = self.acquire_calc(self.calculator)
+				self.atoms.set_cell(self.size)
+				self.atoms.set_pbc(self.pbc)
+			else:
+				raise TypeError('Input structure might be a .traj-file. Change the input extention to .traj and try again.')
 
 
 	def acquire_calc(self, arg=None):
