@@ -48,8 +48,8 @@ class EnergyMinimisation(Configure):
 		# Logging
 		self.save_traj()
 		
-		print('Starting energy:')
-		self.print_energy()
+		#print('Starting energy:')
+		#self.print_energy()
 
 		# Run the minimisation
 		if (self.STEPS is None) and (self.FMAX is None):
@@ -62,8 +62,8 @@ class EnergyMinimisation(Configure):
 		else:
 			self.dyn.run(steps=self.STEPS, fmax=self.FMAX)
 
-		print('\nFinal energy:')
-		self.print_energy()
+		#print('\nFinal energy:')
+		#self.print_energy()
 
 
 	def save_structure(self):
