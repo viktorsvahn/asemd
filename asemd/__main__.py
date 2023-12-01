@@ -248,7 +248,9 @@ def main():
 	print(f'Running from: {path}')
 	
 	# Stack input variables in a dataframe
-	param_df = pd.DataFrame.from_dict([mode_input, global_input], orient='index', columns=[''])
+	mode_param_df = pd.DataFrame.from_dict(mode_input, orient='index', columns=[''])
+	global_param_df = pd.DataFrame.from_dict(global_input, orient='index', columns=[''])
+	param_df = mode_param_df.join(global_param_df)
 
 	print(f'Mode: {mode} ({modes[mode]})')
 	if args.test:
