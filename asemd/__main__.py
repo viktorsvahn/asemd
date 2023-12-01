@@ -250,13 +250,14 @@ def main():
 	# Stack input variables in a dataframe
 	mode_param_df = pd.DataFrame.from_dict(mode_input, orient='index', columns=[''])
 	global_param_df = pd.DataFrame.from_dict(global_input, orient='index', columns=[''])
-	param_df = pd.concat([global_param_df, mode_param_df], keys=['Global', 'Mode specific'])
+	global_param_df.drop(index='log path')
 
 	print(f'Mode: {mode} ({modes[mode]})')
 	if args.test:
 		print('Running in test mode. No logs or outputs will be saved.')
 	print('\nInput:')
-	print(param_df, '\n')
+	print(global_param_df)
+	print(mode_param_df, '\n')
 
 	start = datetime.datetime.now()
 	print(f'\nStarted: {start}\n')
@@ -268,7 +269,8 @@ def main():
 			with open(log_file, 'a') as f:
 				print('='*80, file=f)
 				print('Input:', file=f)
-				print(param_df, file=f)
+				print(global_param_df, file=f)
+				print(mode_param_df, file=f)
 				print(f'\nStarted: {start}\n', file=f)
 
 
