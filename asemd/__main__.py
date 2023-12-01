@@ -250,7 +250,7 @@ def main():
 	# Stack input variables in a dataframe
 	mode_param_df = pd.DataFrame.from_dict(mode_input, orient='index', columns=[''])
 	global_param_df = pd.DataFrame.from_dict(global_input, orient='index', columns=[''])
-	param_df = pd.concat(global_param_df, mode_param_df, keys=['Global', 'Mode specific'])
+	param_df = pd.concat([global_param_df, mode_param_df], keys=['Global', 'Mode specific'])
 
 	print(f'Mode: {mode} ({modes[mode]})')
 	if args.test:
