@@ -45,6 +45,9 @@ class EnergyMinimisation(Configure):
 		# Initiate dynamic optimiser object
 		self.dyn = global_vars.get(self.mode_params['optimiser'])(self.atoms)
 		
+		# Logging
+		self.save_traj()
+		
 		# Run the minimisation
 		if (self.STEPS is None) and (self.FMAX is None):
 			print('No minimisation criteria given!')
@@ -58,7 +61,6 @@ class EnergyMinimisation(Configure):
 
 		# Saves output after obtaining properties
 		#self.save_structure()
-		self.save_traj()
 
 	def save_structure(self):
 		"""If an output filename has been given, the the output is saved to a
