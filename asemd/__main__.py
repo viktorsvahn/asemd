@@ -89,6 +89,14 @@ def main():
 	else:
 		STEPS = None
 
+	if args.DUMP_INTERVAL:
+			DUMP_INTERVAL = int(args.DUMP_INTERVAL)
+			mode_input['dump interval'] = DUMP_INTERVAL
+		elif 'dump interval' in mode_input:
+			DUMP_INTERVAL = mode_input['dump interval']
+		else:
+			DUMP_INTERVAL = 1
+
 	if args.test == False:
 		log_path = global_input['log path']
 		# Create a log dir and save logs if a dit has been specified
@@ -135,6 +143,7 @@ def main():
 			optimiser,
 			STEPS,
 			FMAX,
+			DUMP_INTERVAL,
 			mode_input,
 			global_input,
 			path+input_structure,
@@ -206,14 +215,6 @@ def main():
 			CHARACTERSISTIC_TIMESCALE = mode_input['thermostat timescale']
 		else:
 			CHARACTERSISTIC_TIMESCALE = None
-
-		if args.DUMP_INTERVAL:
-			DUMP_INTERVAL = int(args.DUMP_INTERVAL)
-			mode_input['dump interval'] = DUMP_INTERVAL
-		elif 'dump interval' in mode_input:
-			DUMP_INTERVAL = mode_input['dump interval']
-		else:
-			DUMP_INTERVAL = 1
 
 
 		# Initiate molecular dynamics object

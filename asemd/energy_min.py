@@ -27,13 +27,15 @@ class EnergyMinimisation(Configure):
 	def __init__(self,
 			optimiser,
 			STEPS=None,
-			FMAX=None, 
+			FMAX=None,
+			DUMP_INTERVAL,
 			*args
 		):
 		super().__init__(*args)
 		self.optimiser = optimiser
 		self.STEPS = STEPS
 		self.FMAX= FMAX
+		self.DUMP_INTERVAL = DUMP_INTERVAL
 
 
 	def run(self):
