@@ -27,9 +27,9 @@ class SinglePoint(Configure):
 	def __init__(self, *args):
 		super().__init__(*args)
 
-		#if self.mode_params['evaluate'] is not None:
-		#	for a in self.atoms:
-		#		a.arrays.pop('forces')
+		if self.mode_params['evaluate'] is not None:
+			for a in self.atoms:
+				a.arrays.pop('forces')
 
 
 	def run(self):
@@ -37,11 +37,11 @@ class SinglePoint(Configure):
 		specified in the YAML input file.
 
 		Supported properties:
-		- Forces
-		- Energies
-		- Momenta
-		- Stress
-		- Velocities"""
+		- forces
+		- energies
+		- momenta
+		- stress
+		- velocities"""
 		# Checks to see if properties have been assigned correctly in the input
 		if ('evaluate' in self.mode_params) and (self.mode_params['evaluate'] is not None):
 			self.evaluate = set(self.mode_params['evaluate'])
