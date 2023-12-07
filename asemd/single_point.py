@@ -27,10 +27,6 @@ class SinglePoint(Configure):
 	def __init__(self, *args):
 		super().__init__(*args)
 
-		#if self.mode_params['evaluate'] is not None:
-		#	for a in self.atoms:
-		#		a.arrays.pop('forces')
-
 
 	def run(self):
 		"""Runs the single point evaluation of the properties that have been
@@ -47,8 +43,10 @@ class SinglePoint(Configure):
 			self.evaluate = set(self.mode_params['evaluate'])
 
 			if 'forces' in self.evaluate:
+				print(self.atoms[0].arrays['forces'])
 				for a in self.atoms:
 					if 'forces' in a.arrays: a.arrays.pop('forces')
+				print(self.atoms[0].arrays['forces'])
 				self.acquire_property('get_forces')
 			if 'energies' in self.evaluate:
 				for a in self.atoms:
