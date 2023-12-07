@@ -56,8 +56,7 @@ class MolecularDynamics(Configure):
 		self.external_stress = external_stress
 		self.log_file = log_file	
 
-		# Set initial velocities based on temperature
-		MaxwellBoltzmannDistribution(self.atoms, temperature_K=self.TEMPERATURE)
+		
 
 
 	# Auxillary methods
@@ -82,6 +81,9 @@ class MolecularDynamics(Configure):
 		
 	def run(self):
 		"""Runs a molecular dynamics simulation under a chosen ensemble."""
+		# Set initial velocities based on temperature
+		MaxwellBoltzmannDistribution(self.atoms, temperature_K=self.TEMPERATURE)
+
 		# Add output generator to dynamic object for info during run
 		self.dyn.attach(self.print_energy, interval=self.DUMP_INTERVAL)
 
@@ -118,6 +120,8 @@ class MolecularDynamics(Configure):
 		a Nosé-Hoover thermostat and a Parrinello-Rahman barostat."""
 		if self.PFACTOR is not None:
 			self.PFACTOR = float(self.PFACTOR)
+		else:
+			pass
 
 		self.dyn = NPT(
 			self.atoms,
