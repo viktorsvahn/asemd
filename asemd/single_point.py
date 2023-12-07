@@ -47,23 +47,23 @@ class SinglePoint(Configure):
 			self.evaluate = set(self.mode_params['evaluate'])
 
 			if 'forces' in self.evaluate:
-				for a in self¨.atoms:
+				for a in self.atoms:
 					if 'forces' in a.arrays: a.arrays.pop('forces')
 				self.acquire_property('get_forces')
 			if 'energies' in self.evaluate:
-				for a in self¨.atoms:
+				for a in self.atoms:
 					if 'energies' in a.arrays: a.arrays.pop('energies')
 				self.acquire_property('get_potential_energies')
 			if 'momenta' in self.evaluate:
-				for a in self¨.atoms:
+				for a in self.atoms:
 					if 'momenta' in a.arrays: a.arrays.pop('momenta')
 				self.acquire_property('get_momenta')
 			if 'stress' in self.evaluate:
-				for a in self¨.atoms:
+				for a in self.atoms:
 					if 'stress' in a.arrays: a.arrays.pop('stress')
 				self.acquire_property('get_stress')
 			if 'velocities' in self.evaluate:
-				for a in self¨.atoms:
+				for a in self.atoms:
 					if 'velocities' in a.arrays: a.arrays.pop('velocities')
 				self.acquire_property('get_velocities')
 			
