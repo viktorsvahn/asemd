@@ -118,6 +118,7 @@ class MolecularDynamics(Configure):
 	def npt(self):
 		"""Sets up a dynamic object for an isobaric ensemble simulation using 
 		a Nosé-Hoover thermostat and a Parrinello-Rahman barostat."""
+		print(self.PFACTOR, type(self.PFACTOR))
 		if self.PFACTOR is not None:
 			self.PFACTOR = float(self.PFACTOR)
 		else:
