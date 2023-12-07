@@ -15,11 +15,13 @@ class Configure(object):
 	"""Setup class that carries shared variables and methods, such as calculator 
 	selection and energy output."""
 	def __init__(self,
+			force_pbc,
 			mode_params,
 			global_params,
 			input_structure,
 			output_structure
 		):
+		self.force_pbc = force_pbc
 		self.mode_params = mode_params
 		self.global_params = global_params
 		self.input_structure = input_structure
@@ -63,15 +65,25 @@ class Configure(object):
 				self.atoms = atoms
 				for a in self.atoms:
 					a.calc = self.acquire_calc(self.calculator)
-					a.set_cell(self.size)
-					a.set_pbc(self.pbc)
+					if self.force_pbc:
+						a.set_cell(self.size)
+						a.set_pbc(self.pbc)
+						print(a.get_cell())
+					else:
+						print(a.get_cell())
+						pass
 			elif self.num_structures == 1:
 				# If list has length 1, atoms object is first, and only, element
 				#self.atoms = copy.deepcopy(atoms[0])
 				self.atoms = atoms[0]
 				self.atoms.calc = self.acquire_calc(self.calculator)
-				self.atoms.set_cell(self.size)
-				self.atoms.set_pbc(self.pbc)
+				if self.force_pbc:
+					self.atoms.set_cell(self.size)
+					self.atoms.set_pbc(self.pbc)
+					print(self.atoms.get_cell())
+				else:
+					print(self.atoms.get_cell())
+					pass
 			else:
 				raise TypeError('Input structure might be a .traj-file. Change the input extention to .traj and try again.')
 

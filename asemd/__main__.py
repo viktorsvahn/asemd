@@ -81,6 +81,16 @@ def main():
 	else:
 		output_structure = False
 
+	if 'force pbc' in mode_input:
+		if mode_input['force pbc']:
+			force_pbc = mode_input['force pbc']
+		else:
+			force_pbc = False
+			mode_input['force pbc'] = force_pbc
+	else:
+		force_pbc = False
+		mode_input['force pbc'] = force_pbc
+
 	if args.STEPS:
 		STEPS = int(args.STEPS)
 		mode_input['steps'] = STEPS
@@ -145,6 +155,7 @@ def main():
 			FMAX,
 			DUMP_INTERVAL,
 			log_file,
+			force_pbc,
 			mode_input,
 			global_input,
 			path+input_structure,
@@ -156,6 +167,7 @@ def main():
 	elif mode == 'SP':
 		# Initiate a single point caluclation object
 		setup = sp.SinglePoint(
+			force_pbc,
 			mode_input,
 			global_input,
 			path+input_structure,
@@ -198,7 +210,7 @@ def main():
 		else:
 			PFACTOR = None
 
-		if args.external_stress:
+		if args.external_stress is not None:
 			if len(args.external_stress) > 1:
 				external_stress = list(args.external_stress)
 			else:
@@ -210,7 +222,7 @@ def main():
 			else:
 				external_stress = float(mode_input['external stress'])
 		else:
-			external_stress = 1
+			external_stress = 0
 
 		if args.CHARACTERSISTIC_TIMESCALE:
 			CHARACTERSISTIC_TIMESCALE = float(args.CHARACTERSISTIC_TIMESCALE)
@@ -232,6 +244,7 @@ def main():
 			DUMP_INTERVAL,
 			external_stress,
 			log_file,
+			force_pbc,
 			mode_input,
 			global_input,
 			path+input_structure,
