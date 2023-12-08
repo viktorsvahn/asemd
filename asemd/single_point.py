@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+import numpy as np
 
 from ase.io import read, write
 
@@ -50,46 +51,13 @@ class SinglePoint(Configure):
 		- stress
 		- velocities"""
 
-
-
 		# Checks to see if properties have been assigned correctly in the input
 		if ('evaluate' in self.mode_params) and (self.mode_params['evaluate'] is not None):
 			self.evaluate = set(self.mode_params['evaluate'])
 
+			# Runs evaluation on all attributes
 			for attribute in self.evaluate:
 				self.acquire_property(attribute)
-
-			#for a in self.atoms:
-			#	print(a.arrays['forces'])
-
-
-
-			#if 'forces' in self.evaluate:
-			#	attr = 'forces'
-			#	for a in self.atoms:
-			#		self.acquire_property('get_forces')
-			#		#print(a.arrays[attr])
-
-
-			#if 'energies' in self.evaluate:
-			#	attr = 'energies'
-			#	for a in self.atoms:
-			#		self.acquire_property('get_potential_energies')
-
-			#if 'momenta' in self.evaluate:
-			#	attr = 'momenta'
-			#	for a in self.atoms:
-			#		self.acquire_property('get_momenta')
-
-			#if 'stress' in self.evaluate:
-			#	attr = 'stress'
-			#	for a in self.atoms:
-			#		self.acquire_property('get_stress')
-
-			#if 'velocities' in self.evaluate:
-			#	attr = 'velocities'
-			#	for a in self.atoms:
-			#		self.acquire_property('get_velocities')
 			
 		else:
 			print('Nothing to evaluate!')
@@ -98,20 +66,22 @@ class SinglePoint(Configure):
 		# Saves output after obtaining properties
 		self.save_structure()
 
-
 	def acquire_property(self, attribute):
 		"""Evaluates the input structure for the properties specified in the 
 		input."""
-		#This is achieved using the getattr-method which concatenates the first
-		#and second arguments as first.second. For example, if first=a and 
-		#second='get_forces', then attr=a.get_forces. The added parenthesis
-		#results in the correct expression a.get_forces().
+		# This is achieved using the getattr-method which concatenates the first
+		# and second arguments as first.second. For example, if first=a and 
+		# second='get_forces', then attr=a.get_forces. The added parenthesis
+		# results in the correct expression a.get_forces().
 		if self.num_structures > 1:
 			for a in self.atoms:
-				#a.arrays.pop(attribute)
+				a.arrays.pop(attribute)
 				prop = getattr(a, self.attribute_map[attribute])()
+				a.arrays[attribute] = prop
 		else:
+			self.atoms.arrays.pop(attribute)
 			prop = getattr(self.atoms, attribute)()
+			self.atoms.arrays[attribute] = prop
 
 	def save_structure(self):
 			"""If an output filename has been given, the the output is saved to a
