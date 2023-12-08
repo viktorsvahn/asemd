@@ -24,9 +24,20 @@ class SinglePoint(Configure):
 		- Momenta
 		- Stress
 		- Velocities"""
+
+
+	
+
 	def __init__(self, *args):
 		super().__init__(*args)
 
+		self.attribute_map = {
+			'forces':'get_forces',
+			'energies':'get_potential_energies',
+			'momenta':'get_momenta',
+			'momenta':'get_momenta',
+			'velocities':'get_velocities'
+		}
 
 	def run(self):
 		"""Runs the single point evaluation of the properties that have been
@@ -38,39 +49,47 @@ class SinglePoint(Configure):
 		- momenta
 		- stress
 		- velocities"""
+
+
+
 		# Checks to see if properties have been assigned correctly in the input
 		if ('evaluate' in self.mode_params) and (self.mode_params['evaluate'] is not None):
 			self.evaluate = set(self.mode_params['evaluate'])
 
-			if 'forces' in self.evaluate:
-				attr = 'forces'
-				for a in self.atoms:
-					if attr in a.arrays: a.arrays.pop(attr)
-				self.acquire_property('get_forces')
+			for attribute in self.evaluate:
+				self.acquire_property(attribute)
 
-			if 'energies' in self.evaluate:
-				attr = 'energies'
-				for a in self.atoms:
-					if attr in a.arrays: a.arrays.pop(attr)
-				self.acquire_property('get_potential_energies')
+			#for a in self.atoms:
+			#	print(a.arrays['forces'])
 
-			if 'momenta' in self.evaluate:
-				attr = 'momenta'
-				for a in self.atoms:
-					if attr in a.arrays: a.arrays.pop(attr)
-				self.acquire_property('get_momenta')
 
-			if 'stress' in self.evaluate:
-				attr = 'stress'
-				for a in self.atoms:
-					if attr in a.arrays: a.arrays.pop(attr)
-				self.acquire_property('get_stress')
 
-			if 'velocities' in self.evaluate:
-				attr = 'velocities'
-				for a in self.atoms:
-					if attr in a.arrays: a.arrays.pop(attr)
-				self.acquire_property('get_velocities')
+			#if 'forces' in self.evaluate:
+			#	attr = 'forces'
+			#	for a in self.atoms:
+			#		self.acquire_property('get_forces')
+			#		#print(a.arrays[attr])
+
+
+			#if 'energies' in self.evaluate:
+			#	attr = 'energies'
+			#	for a in self.atoms:
+			#		self.acquire_property('get_potential_energies')
+
+			#if 'momenta' in self.evaluate:
+			#	attr = 'momenta'
+			#	for a in self.atoms:
+			#		self.acquire_property('get_momenta')
+
+			#if 'stress' in self.evaluate:
+			#	attr = 'stress'
+			#	for a in self.atoms:
+			#		self.acquire_property('get_stress')
+
+			#if 'velocities' in self.evaluate:
+			#	attr = 'velocities'
+			#	for a in self.atoms:
+			#		self.acquire_property('get_velocities')
 			
 		else:
 			print('Nothing to evaluate!')
@@ -78,6 +97,7 @@ class SinglePoint(Configure):
 
 		# Saves output after obtaining properties
 		self.save_structure()
+
 
 	def acquire_property(self, attribute):
 		"""Evaluates the input structure for the properties specified in the 
@@ -88,7 +108,8 @@ class SinglePoint(Configure):
 		#results in the correct expression a.get_forces().
 		if self.num_structures > 1:
 			for a in self.atoms:
-				prop = getattr(a, attribute)()
+				#a.arrays.pop(attribute)
+				prop = getattr(a, self.attribute_map[attribute])()
 		else:
 			prop = getattr(self.atoms, attribute)()
 
