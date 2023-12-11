@@ -67,11 +67,9 @@ class Configure(object):
 					a.calc = self.acquire_calc(self.calculator)
 					if self.force_pbc:
 						a.set_cell(self.size)
-						a.set_pbc(self.pbc)
-						print(a.get_cell())
 					else:
-						print(a.get_cell())
 						pass
+					a.set_pbc(self.pbc)
 			elif self.num_structures == 1:
 				# If list has length 1, atoms object is first, and only, element
 				#self.atoms = copy.deepcopy(atoms[0])
@@ -79,11 +77,9 @@ class Configure(object):
 				self.atoms.calc = self.acquire_calc(self.calculator)
 				if self.force_pbc:
 					self.atoms.set_cell(self.size)
-					self.atoms.set_pbc(self.pbc)
-					print(self.atoms.get_cell())
 				else:
-					print(self.atoms.get_cell())
 					pass
+				self.atoms.set_pbc(self.pbc)
 			else:
 				raise TypeError('Input structure might be a .traj-file. Change the input extention to .traj and try again.')
 

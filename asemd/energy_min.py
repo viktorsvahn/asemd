@@ -45,8 +45,10 @@ class EnergyMinimisation(Configure):
 
 		The method requires the number step, a maximum force criteria or both."""	
 		# Initiate dynamic optimiser object
-		self.dyn = global_vars.get(self.mode_params['optimiser'])(self.atoms, logfile=self.log_file)
-		self.dyn = global_vars.get(self.mode_params['optimiser'])(self.atoms)
+		if self.log_file is None:
+			self.dyn = global_vars.get(self.mode_params['optimiser'])(self.atoms)
+		else:	
+			self.dyn = global_vars.get(self.mode_params['optimiser'])(self.atoms, logfile=self.log_file)
 		
 		# Logging
 		self.save_traj()
