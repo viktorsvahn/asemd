@@ -63,8 +63,6 @@ class SinglePoint(Configure):
 			print('Nothing to evaluate!')
 			print('Choose a property to evaluate by including:\nevaluate:\n  - property\nin the YAML input file.')
 
-		# Saves output after obtaining properties
-		self.save_structure()
 
 	def acquire_property(self, attribute):
 		"""Evaluates the input structure for the properties specified in the 
@@ -78,15 +76,17 @@ class SinglePoint(Configure):
 				a.arrays.pop(attribute)
 				prop = getattr(a, self.attribute_map[attribute])()
 				a.arrays[attribute] = prop
+				self.save_structure()
 		else:
 			self.atoms.arrays.pop(attribute)
 			prop = getattr(self.atoms, attribute)()
 			self.atoms.arrays[attribute] = prop
+			self.save_structure()
 
 	def save_structure(self):
 			"""If an output filename has been given, the the output is saved to a
 			file by appending all atoms objects to the file."""
 			if self.output_structure:
-				write(self.output_structure, self.atoms)
+				write(self.output_structure, self.atoms, append=True)
 			else:
 				pass
