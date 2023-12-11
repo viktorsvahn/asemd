@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+import os
 import numpy as np
 
 from ase.io import read, write
@@ -51,6 +52,11 @@ class SinglePoint(Configure):
 		- stress
 		- velocities"""
 
+		try:
+			os.remove(self.output_structure)
+		except:
+			print(f'Could not remove previous output file named: {self.output_structure}')
+
 		# Checks to see if properties have been assigned correctly in the input
 		if ('evaluate' in self.mode_params) and (self.mode_params['evaluate'] is not None):
 			self.evaluate = set(self.mode_params['evaluate'])
@@ -76,17 +82,22 @@ class SinglePoint(Configure):
 				a.arrays.pop(attribute)
 				prop = getattr(a, self.attribute_map[attribute])()
 				a.arrays[attribute] = prop
-				self.save_structure()
+				self.save_structure(a)
 		else:
 			self.atoms.arrays.pop(attribute)
 			prop = getattr(self.atoms, attribute)()
 			self.atoms.arrays[attribute] = prop
-			self.save_structure()
 
-	def save_structure(self):
-			"""If an output filename has been given, the the output is saved to a
-			file by appending all atoms objects to the file."""
-			if self.output_structure:
-				write(self.output_structure, self.atoms, append=True)
-			else:
-				pass
+			# It is important to have thius method here, and nu under self.run.
+			# Otherwise ASE will sometimes not forget previous evaluations and
+			# save duplicate evaluations on multiple structres. This requires
+			# append=True to be set. Why this occurs is unclear.
+			self.save_structure(self.atoms)
+
+	def save_structure(self, structure):
+		"""If an output filename has been given, the the output is saved to a
+		file by appending all atoms objects to the file."""
+		if self.output_structure:
+			write(self.output_structure, structure, append=True)
+		else:
+			pass
