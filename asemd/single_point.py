@@ -52,10 +52,13 @@ class SinglePoint(Configure):
 		- stress
 		- velocities"""
 
-		try:
-			os.remove(self.output_structure)
-		except:
-			print(f'Could not remove previous output file named: {self.output_structure}')
+		if (self.output_structure is not None) and (
+			os.path.exists(self.output_structure)):
+			try:
+				os.remove(self.output_structure)
+			except:
+				print(f'Could not remove previous output file named: {self.output_structure}')
+				raise
 
 		# Checks to see if properties have been assigned correctly in the input
 		if ('evaluate' in self.mode_params) and (self.mode_params['evaluate'] is not None):
