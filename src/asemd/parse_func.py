@@ -67,7 +67,7 @@ thermostat timescale:\tCharacteristic timescale of Nosé-Hoover thermostat (NPT)
 	parser.add_argument(
 		'--version',
 		action='version',
-		version=version('asemd')
+		version=f'asemd ver. {version("asemd")}'
 	)
 	
 	# Define arguments/flags for running program
