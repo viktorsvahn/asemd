@@ -15,12 +15,18 @@ where = ["src"]
 [project]
 name = "asemd"
 dynamic = ["version"]
+maintainers = [
+    {name = "Viktor Svahn", email="viktor.svahn@kemi.uu.se"}
+]
 requires-python = ">=3.8"
 description = "CLI for the atomic simulation environment (ASE)."
 readme = {file = "README.md", content-type = "text/markdown"}
 license = {file = "LICENSE"}
-maintainers = [
-    {name = "Viktor Svahn", email="viktor.svahn@kemi.uu.se"}
+dependencies = [
+    "numpy",
+    "ase",
+    "pandas",
+    "pyyaml"
 ]
 
 [project.urls]
