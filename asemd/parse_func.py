@@ -1,12 +1,15 @@
 #!/usr/bin/python
 
 import argparse
+from importlib.metadata import version
 
 def create_parser():
 	parser = argparse.ArgumentParser(
 		prog = 'asemd',
 		formatter_class=argparse.RawTextHelpFormatter,
-		description = '''
+		description = f'''
+Running version {version('asemd')}
+
 To run this script, call e.g.,
 
 $ asemd NVE input.in 
@@ -62,7 +65,12 @@ external stress:\tExternal stress tensor used in NPT ensembles.
 thermostat timescale:\tCharacteristic timescale of Nosé-Hoover thermostat (NPT).
 '''
 	)
-
+	parser.add_argument(
+		'--version',
+		action='version',
+		version=version('asemd')
+	)
+	
 	# Define arguments/flags for running program
 	parser.add_argument(
 		'--test',

@@ -1,16 +1,24 @@
 [build-system]
-requires = ["setuptools", "setuptools-scm"]
+requires = [
+    "setuptools",
+    "setuptools-git-versioning",
+    "setuptools-scm"
+]
 build-backend = "setuptools.build_meta"
+
+[tool.setuptools-git-versioning]
+enabled = true
 
 [project]
 name = "asemd"
+dynamic = ["version"]
+requires-python = ">=3.8"
 description = "CLI for the atomic simulation environment (ASE)."
 readme = {file = "README.md", content-type = "text/markdown"}
 license = {file = "LICENSE"}
 maintainers = [
     {name = "Viktor Svahn", email="viktor.svahn@kemi.uu.se"}
 ]
-dynamic = ["version"]
 
 [project.urls]
 repository = "https://github.com/viktorsvahn/asemd"
