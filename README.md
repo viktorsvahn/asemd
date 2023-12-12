@@ -18,7 +18,7 @@ to run an NVE simulation using the settings from the input file. The test-flag e
 
 For additional information surrounding this package, please use
 ```
-asemd -h
+asemd --help
 ```
 which includes a more in-depth user guide.
 
