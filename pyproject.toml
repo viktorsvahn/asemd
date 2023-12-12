@@ -27,4 +27,4 @@ maintainers = [
 repository = "https://github.com/viktorsvahn/asemd"
 
 [project.scripts]
-asemd = "asemd.__main__:main"
+asemd = "src.__main__:main"
