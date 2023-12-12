@@ -4,6 +4,7 @@
 import copy
 import sys
 import os
+import time
 
 from ase.io import read, iread, write
 from ase.io.trajectory import Trajectory
@@ -15,17 +16,16 @@ class Configure(object):
 	"""Setup class that carries shared variables and methods, such as calculator 
 	selection and energy output."""
 	def __init__(self,
-			force_pbc,
 			mode_params,
 			global_params,
 			input_structure,
 			output_structure
 		):
-		self.force_pbc = force_pbc
 		self.mode_params = mode_params
 		self.global_params = global_params
 		self.input_structure = input_structure
 		self.output_structure = output_structure
+		self.count = 0
 
 		# Raise error if no calcualtor has been specified
 		if ('calculator' not in self.mode_params) or (
@@ -35,23 +35,62 @@ class Configure(object):
 		else:
 			self.calculator = self.mode_params['calculator']
 
-		# Collect geometry variables
-		self.pbc = self.global_params['periodic']
-		size = global_params['box size'].split(' ')
-		self.size = [float(s) for s in size]
-		if 'starting index' in self.global_params:
-			self.STARTING_INDEX = self.global_params['starting index']
+		# Collect geometry variables and indices
+		if 'periodic' in self.mode_params:
+			self.pbc = self.mode_params['periodic']
 		else:
-			self.STARTING_INDEX = -1
+			self.pbc = False
+			self.mode_params['periodic'] = self.pbc
+
+		print(self.pbc)
+
+		if 'box size' in self.mode_params:
+			size = mode_params['box size'].split(' ')
+			self.size = [float(s) for s in size]
+		else:
+			self.size = False
+
+		if 'structure index' in self.mode_params:
+			self.STRUCTURE_INDEX = self.mode_params['structure index']
+		else:
+			if 'traj' in self.input_structure:
+				self.STRUCTURE_INDEX = -1
+				self.mode_params['structure index'] = self.STRUCTURE_INDEX
+			else:
+				self.STRUCTURE_INDEX = False
+
+
+		# Generate atoms-object list from input structure(s)
+		self.atoms = self.load_structure(self.input_structure)
+		print(type(self.atoms))
+		for a in self.atoms:
+			a.set_cell(self.size)
+			a.set_pbc(self.pbc)
+			a.calc = self.acquire_calc(self.calculator)
+
+		# Remove any previous files with the same name as target output
+		if self.output_structure and (
+			os.path.exists(self.output_structure)):
+			print('-'*80)
+			print('Warning:')
+			print(f'Target output file {self.output_structure} already exist.')
+			ext = self.output_structure.split('.')[-1]
+			self.output_structure = self.output_structure.replace('.'+ext, '')
+			self.output_structure += '_'+time.strftime("%Y%m%d-%H%M%S")+'.'+ext
+			print(f'Created a new outfile called {self.output_structure}')
+			print('-'*80)	
+		else:
+			pass
 
 		# Input will only be read as a traj if name includes correct extension
 		# Otherwise it will be treated as a .pdb or .xyz file that may, or may
 		# not, include several structures. If this attempt fails, an error is
 		# raised, implying that the input may be a .traj file regardless of its
 		# extension.
+		"""
 		if 'traj' in self.input_structure:
 			# If file is trajecory, input
-			self.atoms = Trajectory(self.input_structure)[self.STARTING_INDEX]
+			self.atoms = Trajectory(self.input_structure)[self.STRUCTURE_INDEX]
 			self.atoms.calc = self.acquire_calc(self.calculator)
 			self.atoms.set_cell(self.size)
 			self.atoms.set_pbc(self.pbc)
@@ -82,6 +121,7 @@ class Configure(object):
 				self.atoms.set_pbc(self.pbc)
 			else:
 				raise TypeError('Input structure might be a .traj-file. Change the input extention to .traj and try again.')
+		"""
 
 
 	def acquire_calc(self, arg=None):
@@ -107,3 +147,16 @@ class Configure(object):
 		etot = epot + ekin
 		temp = ekin/(1.5*units.kB)
 		print(f'Energy per atom: Epot: {epot:.4f} eV, Ekin: {ekin:.4f} eV (T: {temp:3.0f} K), Etot: {etot:.4} eV')
+
+	def load_structure(self, filename):
+		"""Reads input files and stores them in an iterable list."""
+		if 'traj' in self.input_structure:
+			structure_list = [Trajectory(filename)[self.STRUCTURE_INDEX]]
+		else:
+			if self.STRUCTURE_INDEX:
+				structure_list = [read(filename, ':')[self.STRUCTURE_INDEX]]
+			else:
+				structure_list = read(filename, ':')
+
+		return structure_list
+

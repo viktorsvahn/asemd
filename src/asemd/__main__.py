@@ -81,16 +81,6 @@ def main():
 	else:
 		output_structure = False
 
-	if 'force pbc' in mode_input:
-		if mode_input['force pbc']:
-			force_pbc = mode_input['force pbc']
-		else:
-			force_pbc = False
-			mode_input['force pbc'] = force_pbc
-	else:
-		force_pbc = False
-		mode_input['force pbc'] = force_pbc
-
 	if args.STEPS:
 		STEPS = int(args.STEPS)
 		mode_input['steps'] = STEPS
@@ -155,7 +145,6 @@ def main():
 			FMAX,
 			DUMP_INTERVAL,
 			log_file,
-			force_pbc,
 			mode_input,
 			global_input,
 			path+input_structure,
@@ -167,7 +156,6 @@ def main():
 	elif mode == 'SP':
 		# Initiate a single point caluclation object
 		setup = sp.SinglePoint(
-			force_pbc,
 			mode_input,
 			global_input,
 			path+input_structure,
@@ -244,7 +232,6 @@ def main():
 			DUMP_INTERVAL,
 			external_stress,
 			log_file,
-			force_pbc,
 			mode_input,
 			global_input,
 			path+input_structure,
@@ -283,13 +270,12 @@ def main():
 	print(f'\nStarted: {start}\n')
 
 	# Write input parameters to log file
-	if args.test == False:
-		if log_file is not None:
-			with open(log_file, 'a') as f:
-				print('='*80, file=f)
-				print('Input:', file=f)
-				print(param_df, file=f)
-				print(f'\nStarted: {start}\n', file=f)
+	if (args.test == False) and (log_file is not None):
+		with open(log_file, 'a') as f:
+			print('='*80, file=f)
+			print('Input:', file=f)
+			print(param_df, file=f)
+			print(f'\nStarted: {start}\n', file=f)
 
 
 	# Runs the setup initialised for a given mode

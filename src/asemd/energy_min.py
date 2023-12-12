@@ -59,8 +59,11 @@ class EnergyMinimisation(Configure):
 
 		# Run the minimisation
 		if (self.STEPS is None) and (self.FMAX is None):
+			print('-'*80)
+			print('Warning:')
 			print('No minimisation criteria given!')
 			print('''Choose the number of STEPS or maximum allowed force by including one of:\n  STEPS: number\n  FMAX: value\nin the YAML input file.''')
+			print('-'*80)
 		elif self.STEPS == None:
 			self.dyn.run(fmax=self.FMAX)
 		elif self.FMAX ==None:
@@ -68,6 +71,8 @@ class EnergyMinimisation(Configure):
 		else:
 			self.dyn.run(steps=self.STEPS, fmax=self.FMAX)
 
+
+		# try to remove traj if finished and append 
 		#print('\nFinal energy:')
 		#self.print_energy()
 
@@ -84,7 +89,7 @@ class EnergyMinimisation(Configure):
 		"""Method that generates a trajectory object."""
 		# Generate a trajectory object and attaches it to the dynamic object
 		if self.output_structure:
-			self.traj = Trajectory(self.output_structure, 'w', self.atoms)
+			self.traj = Trajectory(self.output_structure+'_tmp', 'w', self.atoms)
 			self.dyn.attach(self.traj.write, interval=self.DUMP_INTERVAL)
 		else:
 			pass

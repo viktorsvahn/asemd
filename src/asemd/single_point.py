@@ -26,10 +26,6 @@ class SinglePoint(Configure):
 		- Momenta
 		- Stress
 		- Velocities"""
-
-
-	
-
 	def __init__(self, *args):
 		super().__init__(*args)
 
@@ -41,6 +37,7 @@ class SinglePoint(Configure):
 			'velocities':'get_velocities'
 		}
 
+
 	def run(self):
 		"""Runs the single point evaluation of the properties that have been
 		specified in the YAML input file.
@@ -51,15 +48,6 @@ class SinglePoint(Configure):
 		- momenta
 		- stress
 		- velocities"""
-
-		if (self.output_structure is not None) and (
-			os.path.exists(self.output_structure)):
-			try:
-				os.remove(self.output_structure)
-			except:
-				print(f'Could not remove previous output file named: {self.output_structure}')
-				raise
-
 		# Checks to see if properties have been assigned correctly in the input
 		if ('evaluate' in self.mode_params) and (self.mode_params['evaluate'] is not None):
 			self.evaluate = set(self.mode_params['evaluate'])
@@ -69,9 +57,11 @@ class SinglePoint(Configure):
 				self.acquire_property(attribute)
 			
 		else:
+			print('-'*80)
+			print('Warning_')
 			print('Nothing to evaluate!')
 			print('Choose a property to evaluate by including:\nevaluate:\n  - property\nin the YAML input file.')
-
+			print('-'*80)
 
 	def acquire_property(self, attribute):
 		"""Evaluates the input structure for the properties specified in the 
@@ -80,22 +70,18 @@ class SinglePoint(Configure):
 		# and second arguments as first.second. For example, if first=a and 
 		# second='get_forces', then attr=a.get_forces. The added parenthesis
 		# results in the correct expression a.get_forces().
-		if self.num_structures > 1:
-			for a in self.atoms:
+		for a in self.atoms:
+			try:
 				a.arrays.pop(attribute)
+			except:
 				prop = getattr(a, self.attribute_map[attribute])()
 				a.arrays[attribute] = prop
-				self.save_structure(a)
-		else:
-			self.atoms.arrays.pop(attribute)
-			prop = getattr(self.atoms, attribute)()
-			self.atoms.arrays[attribute] = prop
 
-			# It is important to have thius method here, and nu under self.run.
-			# Otherwise ASE will sometimes not forget previous evaluations and
-			# save duplicate evaluations on multiple structres. This requires
-			# append=True to be set. Why this occurs is unclear.
-			self.save_structure(self.atoms)
+				# It is important to have thius method here, and nu under self.run.
+				# Otherwise ASE will sometimes not forget previous evaluations and
+				# save duplicate evaluations on multiple structres. This requires
+				# append=True to be set. Why this occurs is unclear.
+				self.save_structure(a)
 
 	def save_structure(self, structure):
 		"""If an output filename has been given, the the output is saved to a
