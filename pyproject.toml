@@ -9,6 +9,9 @@ build-backend = "setuptools.build_meta"
 [tool.setuptools-git-versioning]
 enabled = true
 
+[tool.setuptools.packages.find]
+where = ["src"]
+
 [project]
 name = "asemd"
 dynamic = ["version"]
