@@ -1,3 +1,8 @@
 build/
+
 src/eggs/
-*.egg*
+eggs/
+.eggs/
+*.egg
+*.egg
+*.egg-info/
