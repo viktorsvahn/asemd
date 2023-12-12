@@ -1,8 +1,5 @@
-build/
+__pycache__/
 
-src/eggs/
-eggs/
-.eggs/
-*.egg
-*.egg
+# Distribution / packaging
+build/
 *.egg-info/
