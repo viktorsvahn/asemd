@@ -1,14 +1,14 @@
 [build-system]
 requires = [
     "setuptools",
-    "setuptools-git-versioning",
-    "setuptools-scm"
+    "setuptools-git-versioning"
 ]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools-git-versioning]
 enabled = true
 template = "{tag}"
+dev_template = "{tag}.post{ccount}"
 
 [tool.setuptools.packages.find]
 where = ["src"]
