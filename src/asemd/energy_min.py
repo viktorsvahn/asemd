@@ -43,7 +43,7 @@ class EnergyMinimisation(Configure):
 	def run(self):
 		"""Runs an energy minimisation using the chosen optimiser.
 
-		The method requires the number step, a maximum force criteria or both."""	
+		The method requires the number step, a maximum force criteria or both."""
 		# Initiate dynamic optimiser object
 		if self.log_file is None:
 			self.dyn = global_vars.get(self.mode_params['optimiser'])(self.atoms)
@@ -53,29 +53,21 @@ class EnergyMinimisation(Configure):
 		# Logging
 		self.save_traj()
 		self.dyn.attach(self.print_energy, interval=self.DUMP_INTERVAL)
-		
-		#print('Starting energy:')
-		#self.print_energy()
 
 		# Run the minimisation
 		if (self.STEPS is None) and (self.FMAX is None):
-			print('-'*80)
-			print('Warning:')
-			print('No minimisation criteria given!')
-			print('''Choose the number of STEPS or maximum allowed force by including one of:\n  STEPS: number\n  FMAX: value\nin the YAML input file.''')
-			print('-'*80)
+			self.error_msg(
+				'No minimisation criteria given!',
+				'Choose the number of STEPS or maximum allowed force by including one of:\n  STEPS: number\n  FMAX: value\nin the YAML input file.',
+				'Minimisation aborted.'
+			)
+
 		elif self.STEPS == None:
 			self.dyn.run(fmax=self.FMAX)
 		elif self.FMAX ==None:
 			self.dyn.run(steps=self.STEPS)
 		else:
 			self.dyn.run(steps=self.STEPS, fmax=self.FMAX)
-
-
-		# try to remove traj if finished and append 
-		#print('\nFinal energy:')
-		#self.print_energy()
-
 
 	def save_structure(self):
 		"""If an output filename has been given, the the output is saved to a

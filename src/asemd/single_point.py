@@ -57,11 +57,12 @@ class SinglePoint(Configure):
 				self.acquire_property(attribute)
 			
 		else:
-			print('-'*80)
-			print('Warning_')
-			print('Nothing to evaluate!')
-			print('Choose a property to evaluate by including:\nevaluate:\n  - property\nin the YAML input file.')
-			print('-'*80)
+			self.error_msg(
+				'No properties specified for evaluation!',
+				'Choose a property to evaluate by including:\nevaluate:\n  - property\nin the YAML input file.',
+				'Evaluation aborted.'
+			)
+
 
 	def acquire_property(self, attribute):
 		"""Evaluates the input structure for the properties specified in the 

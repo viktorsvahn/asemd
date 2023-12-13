@@ -28,10 +28,8 @@ class Configure(object):
 		self.count = 0
 
 		# Raise error if no calcualtor has been specified
-		if ('calculator' not in self.mode_params) or (
-				self.mode_params['calculator'] == None):
-			print('Missing calculator!')
-			print('''Choose EMT (for testing) or specify a python script that contains all calculator\ndefinitions by including:\n  calculator: EMT/name_of_script\nin the YAML input file.''')
+		if 'calculator' not in self.mode_params:
+			self.calculator = False
 		else:
 			self.calculator = self.mode_params['calculator']
 
@@ -42,7 +40,6 @@ class Configure(object):
 			self.pbc = False
 			self.mode_params['periodic'] = self.pbc
 
-		print(self.pbc)
 
 		if 'box size' in self.mode_params:
 			size = mode_params['box size'].split(' ')
@@ -62,23 +59,33 @@ class Configure(object):
 
 		# Generate atoms-object list from input structure(s)
 		self.atoms = self.load_structure(self.input_structure)
-		print(type(self.atoms))
-		for a in self.atoms:
+		for i, a in enumerate(self.atoms):
 			a.set_cell(self.size)
 			a.set_pbc(self.pbc)
-			a.calc = self.acquire_calc(self.calculator)
+
+			# If first calculator cannot be assigned, raise error and terminate
+			if i == 0:
+				try:
+					a.calc = self.acquire_calc(self.calculator)
+				except:
+					self.error_msg(calc_check=True)
+					sys.exit()
 
 		# Remove any previous files with the same name as target output
 		if self.output_structure and (
 			os.path.exists(self.output_structure)):
-			print('-'*80)
-			print('Warning:')
-			print(f'Target output file {self.output_structure} already exist.')
+			# Adds datetime infor just before extension if filename is taken
 			ext = self.output_structure.split('.')[-1]
-			self.output_structure = self.output_structure.replace('.'+ext, '')
-			self.output_structure += '_'+time.strftime("%Y%m%d-%H%M%S")+'.'+ext
-			print(f'Created a new outfile called {self.output_structure}')
-			print('-'*80)	
+			new_filename = self.output_structure.replace('.'+ext, '')
+			new_filename += '_'+time.strftime("%Y%m%d-%H%M%S")+'.'+ext
+			#self.output_structure = self.output_structure.replace('.'+ext, '')
+			#self.output_structure += '_'+time.strftime("%Y%m%d-%H%M%S")+'.'+ext
+			self.error_msg(
+				'Warning:',
+				f'Target output file {self.output_structure} already exist.',
+				f'Created a new outfile called {new_filename}'
+			)
+			self.output_structure = new_filename
 		else:
 			pass
 
@@ -159,4 +166,21 @@ class Configure(object):
 				structure_list = read(filename, ':')
 
 		return structure_list
+
+	def error_msg(self, calc_check=False, *args):
+		"""Envelopes error messages with lines and a 'warning' header."""
+		if calc_check:
+			if self.calculator:
+				pass
+			else:
+				print('CRITICAL ERROR\n')
+				print('Missing calculator!\n')
+				print('Select EMT (for testing) or specify a python script that contains all calculator\ndefinitions by including:')
+				print('MODE:\n  calculator: EMT/name_of_script')
+				print('in the YAML input file.')
+		else:
+			print('-'*80+'\n')
+			for arg in args:
+				print(arg+'\n')
+			print('-'*80)
 
