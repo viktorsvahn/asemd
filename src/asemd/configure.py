@@ -96,7 +96,6 @@ class Configure(object):
 				sys.exit()
 
 		# If previous output exist, create new files datetime handle
-
 		if self.output_structure and (
 			os.path.exists(self.output_structure)):
 			if self.overwrite:

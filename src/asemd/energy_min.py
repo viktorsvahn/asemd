@@ -93,11 +93,10 @@ class EnergyMinimisation(Configure):
 				self.dyn = opt(a, logfile=self.log_file)
 			
 
-			# Logging
-			#self.save_traj()
-			#self.dyn.attach(self.print_energy, interval=self.DUMP_INTERVAL)
-
+			# Logging and svaing
+			#self.save_traj(a) currently not working. Must solve how to deal with indices and such 
 			self.structure_info(a)
+			#self.dyn.attach(self.print_energy, interval=self.DUMP_INTERVAL)
 
 			
 
@@ -127,9 +126,12 @@ class EnergyMinimisation(Configure):
 				eout = f'Potential energy: {energy:.4f}'
 				fout = f'max force: {max(forces):.4f}'
 				print(f'Step: {STEP+self.FIRST_STEPS+1}', eout, fout)
-			
 			print('')
-			
+		
+			self.save_structure(a)	
+
+		
+		#
 		#print(help(
 		#	self.dyn))
 
@@ -140,19 +142,22 @@ class EnergyMinimisation(Configure):
 			atoms = self.atoms
 		pass
 
-	def save_structure(self):
+	def save_structure(self, a):
 		"""If an output filename has been given, the the output is saved to a
 		file by appending all atoms objects to the file."""
 		if self.output_structure:
-			write(self.output_structure, self.atoms, append=True)
+			write(self.output_structure, a, append=True)
 		else:
 			pass
 
-	def save_traj(self):
+	def save_traj(self, atoms):
 		"""Method that generates a trajectory object."""
 		# Generate a trajectory object and attaches it to the dynamic object
 		if self.output_structure:
-			self.traj = Trajectory(self.output_structure, 'w', self.atoms)
+			ext = self.output_structure.split('.')[-1]
+			new_filename = self.output_structure.replace('.'+ext, '_tmp.traj')
+
+			self.traj = Trajectory(new_filename, 'w', atoms)
 			self.dyn.attach(self.traj.write, interval=self.DUMP_INTERVAL)
 		else:
 			pass
