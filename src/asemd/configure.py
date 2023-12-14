@@ -26,6 +26,15 @@ class Configure(object):
 		self.input_structure = input_structure
 		self.output_structure = output_structure
 
+
+		# Switch that allows one to force new output files to overwrite old ones
+		# with identical names
+		if 'overwrite' in self.global_params:
+			self.overwrite = True
+		else:
+			self.overwrite = False
+			self.global_params['overwrite'] = self.overwrite
+
 		# Raise error if no calcualtor has been specified
 		if 'calculator' not in self.mode_params:
 			self.calculator = False
@@ -38,7 +47,6 @@ class Configure(object):
 		else:
 			self.pbc = False
 			self.mode_params['periodic'] = self.pbc
-
 
 		if 'box size' in self.global_params:
 			size = global_params['box size'].split(' ')
@@ -87,23 +95,28 @@ class Configure(object):
 				)
 				sys.exit()
 
-		# Remove any previous files with the same name as target output
+		# If previous output exist, create new files datetime handle
+
 		if self.output_structure and (
 			os.path.exists(self.output_structure)):
+			if self.overwrite:
+				os.remove(self.output_structure)
 
-			# Adds datetime infor just before extension if filename is taken
-			ext = self.output_structure.split('.')[-1]
-			new_filename = self.output_structure.replace('.'+ext, '')
-			new_filename += '_'+time.strftime("%Y%m%d-%H%M%S")+'.'+ext
+			else:
+				# Adds datetime infor just before extension if filename is taken
+				ext = self.output_structure.split('.')[-1]
+				new_filename = self.output_structure.replace('.'+ext, '')
+				new_filename += '_'+time.strftime("%Y%m%d-%H%M%S")+'.'+ext
 
-			self.error_msg(
-				'Warning:',
-				f'Target output file {self.output_structure} already exist.',
-				f'Created a new outfile called {new_filename}'
-			)
-			self.output_structure = new_filename
+				self.error_msg(
+					'Warning:',
+					f'Target output file {self.output_structure} already exist.',
+					f'Created a new outfile called {new_filename}'
+				)
+				self.output_structure = new_filename
 		else:
 			pass
+
 
 		# Input will only be read as a traj if name includes correct extension
 		# Otherwise it will be treated as a .pdb or .xyz file that may, or may
@@ -145,6 +158,14 @@ class Configure(object):
 			else:
 				raise TypeError('Input structure might be a .traj-file. Change the input extention to .traj and try again.')
 		"""
+		if 'structure handle' in self.mode_params:
+			self.structure_handle = self.mode_params['structure handle']
+		else:
+			self.structure_handle = False
+		
+		info = [a.info.keys() for a in self.atoms]
+		self.handle_test = {(self.structure_handle in handle) for handle in info}
+		
 
 
 	def acquire_calc(self, arg=None):
@@ -161,12 +182,14 @@ class Configure(object):
 			calculator = __import__(arg).calculator
 		return calculator
 
-	def print_energy(self):
+	def print_energy(self, atoms=None):
 		"""Print potential-, kinetic energy (together with temperature) and the 
 		total energy of the system.
 		"""
-		epot = self.atoms.get_potential_energy()/len(self.atoms)
-		ekin = self.atoms.get_kinetic_energy()/len(self.atoms)
+		if atoms is None:
+			atoms = self.atoms
+		epot = atoms.get_potential_energy()/len(atoms)
+		ekin = atoms.get_kinetic_energy()/len(atoms)
 		etot = epot + ekin
 		temp = ekin/(1.5*units.kB)
 		print(f'Energy per atom: Epot: {epot:.4f} eV, Ekin: {ekin:.4f} eV (T: {temp:3.0f} K), Etot: {etot:.4} eV')
@@ -191,3 +214,19 @@ class Configure(object):
 			print(arg+'\n')
 		print('-'*80)
 
+	def structure_info(self, atoms):
+		"""Prints structure info (if any) from the header in an input file to
+		stdout.
+
+		Additional data can be printed by specifying data='..' as an argument."""
+		
+		if self.structure_handle and (True in self.handle_test):
+			try:
+				print(f'{self.structure_handle}: {atoms.info[self.structure_handle]}')
+			except:
+				pass
+		else:
+			info = atoms.info
+			info_keys = info.keys()
+			for handle in info_keys:
+				print(f'{handle}: {info[handle]}')

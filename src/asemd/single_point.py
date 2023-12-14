@@ -67,7 +67,8 @@ class SinglePoint(Configure):
 		# first and second arguments as first.second. For example, if first=a 
 		# and second='get_forces', then attr=a.get_forces. The added parenthesis
 		# results in the correct expression a.get_forces().
-		for a in self.atoms:
+		for i, a in enumerate(self.atoms):
+			print(f'Running structure: {i+1} (of {len(self.atoms)})')
 			try:
 				a.arrays.pop(attribute)
 			except:
