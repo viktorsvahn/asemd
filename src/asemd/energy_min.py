@@ -3,6 +3,7 @@
 
 import sys
 import math
+import datetime
 import numpy as np
 
 from ase.optimize import BFGS, MDMin, GPMin
@@ -81,6 +82,8 @@ class EnergyMinimisation(Configure):
 			)
 
 		for i, a in enumerate(self.atoms):
+			if len(self.atoms) > 1:
+				start = datetime.datetime.now()
 			print(f'Running structure: {i+1} (of {len(self.atoms)})')			
 
 
@@ -98,36 +101,62 @@ class EnergyMinimisation(Configure):
 			self.structure_info(a)
 			#self.dyn.attach(self.print_energy, interval=self.DUMP_INTERVAL)
 
-			
-
 			# Run the minimisation
-			if self.STEPS == None:
-				self.dyn.run(steps=self.FIRST_STEPS, fmax=self.FMAX)
-			elif self.FMAX ==None:
+			if (self.STEPS is None) and (self.FMAX is not None):
+				self.dyn.run(fmax=self.FMAX)
+	
+			elif (self.STEPS is not None) and (self.FMAX is None):
 				self.dyn.run(steps=self.FIRST_STEPS)
-			else:
+
+			elif (self.STEPS is not None) and (self.FMAX is not None):
 				self.dyn.run(steps=self.FIRST_STEPS, fmax=self.FMAX)
 
-
-			for STEP in range(self.LAST_STEPS): 
+			"""
 			# Run the minimisation
-				if self.STEPS == None:
-					self.dyn.run(steps=STEP, fmax=self.FMAX)
-				elif self.FMAX ==None:
-					self.dyn.run(steps=STEP)
-				else:
-					self.dyn.run(steps=STEP, fmax=self.FMAX)
-
-				fx, fy, fz = a.get_forces()[:,0], a.get_forces()[:,1], a.get_forces()[:,2]
-				forces = (fx**2 + fy**2 + fz**2)**0.5
-				energy = a.get_potential_energy()
+			if (self.STEPS is None) and (self.FMAX is not None):
+				self.dyn.run(fmax=self.FMAX)
+				
 
 
-				eout = f'Potential energy: {energy:.4f}'
-				fout = f'max force: {max(forces):.4f}'
-				print(f'Step: {STEP+self.FIRST_STEPS+1}', eout, fout)
-			print('')
-		
+			elif (self.STEPS is not None) and (self.FMAX is None):
+				self.dyn.run(steps=self.FIRST_STEPS)
+				for STEP in range(self.LAST_STEPS):
+					self.dyn.run()
+					fx, fy, fz = a.get_forces()[:,0], a.get_forces()[:,1], a.get_forces()[:,2]
+					forces = (fx**2 + fy**2 + fz**2)**0.5
+					energy = a.get_potential_energy()
+
+					eout = f'Potential energy: {energy:.4f}'
+					fout = f'max force: {max(forces):.4f}'
+					print(f'Step: {STEP+self.FIRST_STEPS+1}', eout, fout)
+
+
+			elif (self.STEPS is not None) and (self.FMAX is not None):
+				self.dyn.run(steps=self.FIRST_STEPS, fmax=self.FMAX)
+				for STEP in range(self.LAST_STEPS):
+					self.dyn.run(fmax=self.FMAX)
+					fx, fy, fz = a.get_forces()[:,0], a.get_forces()[:,1], a.get_forces()[:,2]
+					forces = (fx**2 + fy**2 + fz**2)**0.5
+					energy = a.get_potential_energy()
+
+					eout = f'Potential energy: {energy:.4f}'
+					fout = f'max force: {max(forces):.4f}'
+					print(f'Step: {STEP+self.FIRST_STEPS+1}', eout, fout)
+
+			"""
+			fx, fy, fz = a.get_forces()[:,0], a.get_forces()[:,1], a.get_forces()[:,2]
+			forces = (fx**2 + fy**2 + fz**2)**0.5
+			energy = a.get_potential_energy()
+
+			eout = f'Potential energy: {energy:.4f}'
+			fout = f'max force: {max(forces):.4f}'
+			print(f'Step: {self.STEPS}', eout, fout)
+
+			
+			if len(self.atoms) > 1:
+				end = datetime.datetime.now()
+				print(f'Completed after {end-start}\n')
+
 			self.save_structure(a)	
 
 		
