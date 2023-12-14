@@ -49,27 +49,23 @@ class SinglePoint(Configure):
 		- stress
 		- velocities"""
 		# Checks to see if properties have been assigned correctly in the input
-		if ('evaluate' in self.mode_params) and (self.mode_params['evaluate'] is not None):
+		if ('evaluate' in self.mode_params) and (
+			self.mode_params['evaluate'] is not None):
 			self.evaluate = set(self.mode_params['evaluate'])
 
 			# Runs evaluation on all attributes
 			for attribute in self.evaluate:
-				self.acquire_property(attribute)
-			
+				self.acquire_property(attribute)			
 		else:
-			self.error_msg(
-				'No properties specified for evaluation!',
-				'Choose a property to evaluate by including:\nevaluate:\n  - property\nin the YAML input file.',
-				'Evaluation aborted.'
-			)
+			pass
 
 
 	def acquire_property(self, attribute):
 		"""Evaluates the input structure for the properties specified in the 
 		input."""
-		# This is achieved using the getattr-method which concatenates the first
-		# and second arguments as first.second. For example, if first=a and 
-		# second='get_forces', then attr=a.get_forces. The added parenthesis
+		# This is achieved using the getattr-method which concatenates the 
+		# first and second arguments as first.second. For example, if first=a 
+		# and second='get_forces', then attr=a.get_forces. The added parenthesis
 		# results in the correct expression a.get_forces().
 		for a in self.atoms:
 			try:
@@ -78,10 +74,11 @@ class SinglePoint(Configure):
 				prop = getattr(a, self.attribute_map[attribute])()
 				a.arrays[attribute] = prop
 
-				# It is important to have thius method here, and nu under self.run.
-				# Otherwise ASE will sometimes not forget previous evaluations and
-				# save duplicate evaluations on multiple structres. This requires
-				# append=True to be set. Why this occurs is unclear.
+				# It is important to have this method here, and not under 
+				# self.run. Otherwise ASE will sometimes not forget previous 
+				# evaluations and instead save duplicate evaluations on multiple 
+				# structres. This requires append=True to be set. 
+				# Why this occurs is unclear.
 				self.save_structure(a)
 
 	def save_structure(self, structure):

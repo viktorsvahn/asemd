@@ -63,6 +63,7 @@ modes = {
 mode_input = {key.lower():val for key, val in mode_input.items()}
 
 
+
 def main():
 	# INITIALISE SHARED VARIABLES #############################################
 	# CLI arguments have priority over the input file as a rule

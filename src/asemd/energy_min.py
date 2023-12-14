@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+import sys
 
 from ase.optimize import BFGS, MDMin, GPMin
 from ase.io import read, write
@@ -39,30 +40,33 @@ class EnergyMinimisation(Configure):
 		self.DUMP_INTERVAL = DUMP_INTERVAL
 		self.log_file = log_file
 
+		if (self.STEPS is None) and (self.FMAX is None):
+			self.error_msg(
+				'CRITICAL ERROR',
+				'No minimisation criteria given!',
+				'Choose the number of STEPS or maximum allowed force by including one of:\n  STEPS: number\n  FMAX: value\nin the YAML input file.',
+				'Minimisation aborted.'
+			)
+			sys.exit()
+
 
 	def run(self):
 		"""Runs an energy minimisation using the chosen optimiser.
 
-		The method requires the number step, a maximum force criteria or both."""
+		The method requires the number of steps, a maximum force--criteria or both."""
 		# Initiate dynamic optimiser object
+		opt = global_vars.get(self.mode_params['optimiser'])
 		if self.log_file is None:
-			self.dyn = global_vars.get(self.mode_params['optimiser'])(self.atoms)
+			self.dyn = opt(self.atoms)
 		else:	
-			self.dyn = global_vars.get(self.mode_params['optimiser'])(self.atoms, logfile=self.log_file)
+			self.dyn = opt(self.atoms, logfile=self.log_file)
 		
 		# Logging
 		self.save_traj()
 		self.dyn.attach(self.print_energy, interval=self.DUMP_INTERVAL)
 
 		# Run the minimisation
-		if (self.STEPS is None) and (self.FMAX is None):
-			self.error_msg(
-				'No minimisation criteria given!',
-				'Choose the number of STEPS or maximum allowed force by including one of:\n  STEPS: number\n  FMAX: value\nin the YAML input file.',
-				'Minimisation aborted.'
-			)
-
-		elif self.STEPS == None:
+		if self.STEPS == None:
 			self.dyn.run(fmax=self.FMAX)
 		elif self.FMAX ==None:
 			self.dyn.run(steps=self.STEPS)

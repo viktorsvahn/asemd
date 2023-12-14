@@ -25,7 +25,6 @@ class Configure(object):
 		self.global_params = global_params
 		self.input_structure = input_structure
 		self.output_structure = output_structure
-		self.count = 0
 
 		# Raise error if no calcualtor has been specified
 		if 'calculator' not in self.mode_params:
@@ -34,15 +33,15 @@ class Configure(object):
 			self.calculator = self.mode_params['calculator']
 
 		# Collect geometry variables and indices
-		if 'periodic' in self.mode_params:
-			self.pbc = self.mode_params['periodic']
+		if 'periodic' in self.global_params:
+			self.pbc = self.global_params['periodic']
 		else:
 			self.pbc = False
 			self.mode_params['periodic'] = self.pbc
 
 
-		if 'box size' in self.mode_params:
-			size = mode_params['box size'].split(' ')
+		if 'box size' in self.global_params:
+			size = global_params['box size'].split(' ')
 			self.size = [float(s) for s in size]
 		else:
 			self.size = False
@@ -56,30 +55,47 @@ class Configure(object):
 			else:
 				self.STRUCTURE_INDEX = False
 
-
 		# Generate atoms-object list from input structure(s)
 		self.atoms = self.load_structure(self.input_structure)
-		for i, a in enumerate(self.atoms):
-			a.set_cell(self.size)
+		for a in self.atoms:
+			# Terminate if no cell size in input
+			try:
+				a.set_cell(self.size)
+			except:
+				self.error_msg(
+					'CRITICAL ERROR',
+					'Input file contains no cell parameters!',
+					'Please set cell size (Å) manually by adding:',
+					'Global:\n  box size:  x y z',
+					'to the YAML input file.'
+				)
+				sys.exit()
+			
+			# Assing PBC status
 			a.set_pbc(self.pbc)
 
 			# If first calculator cannot be assigned, raise error and terminate
-			if i == 0:
-				try:
-					a.calc = self.acquire_calc(self.calculator)
-				except:
-					self.error_msg(calc_check=True)
-					sys.exit()
+			try:
+				a.calc = self.acquire_calc(self.calculator)
+			except:
+				self.error_msg(
+					'CRITICAL ERROR',
+					'Missing calculator!',
+					'Select EMT (for testing) or specify a python script that contains all calculator\ndefinitions by including:',
+					'MODE:\n  calculator: EMT/name_of_script',
+					'in the YAML input file.'
+				)
+				sys.exit()
 
 		# Remove any previous files with the same name as target output
 		if self.output_structure and (
 			os.path.exists(self.output_structure)):
+
 			# Adds datetime infor just before extension if filename is taken
 			ext = self.output_structure.split('.')[-1]
 			new_filename = self.output_structure.replace('.'+ext, '')
 			new_filename += '_'+time.strftime("%Y%m%d-%H%M%S")+'.'+ext
-			#self.output_structure = self.output_structure.replace('.'+ext, '')
-			#self.output_structure += '_'+time.strftime("%Y%m%d-%H%M%S")+'.'+ext
+
 			self.error_msg(
 				'Warning:',
 				f'Target output file {self.output_structure} already exist.',
@@ -167,20 +183,11 @@ class Configure(object):
 
 		return structure_list
 
-	def error_msg(self, calc_check=False, *args):
-		"""Envelopes error messages with lines and a 'warning' header."""
-		if calc_check:
-			if self.calculator:
-				pass
-			else:
-				print('CRITICAL ERROR\n')
-				print('Missing calculator!\n')
-				print('Select EMT (for testing) or specify a python script that contains all calculator\ndefinitions by including:')
-				print('MODE:\n  calculator: EMT/name_of_script')
-				print('in the YAML input file.')
-		else:
-			print('-'*80+'\n')
-			for arg in args:
-				print(arg+'\n')
-			print('-'*80)
+	def error_msg(self, *args):
+		"""Envelopes (and prints) error messages with lines and adds empty 
+		lines between each argument."""
+		print('-'*80+'\n')
+		for arg in args:
+			print(arg+'\n')
+		print('-'*80)
 
