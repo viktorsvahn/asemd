@@ -3,6 +3,7 @@
 import os
 import datetime
 import numpy as np
+import pandas as pd
 
 from ase.io import read, write
 from ase.io.trajectory import Trajectory
@@ -15,8 +16,9 @@ from asemd.configure import Configure
 
 class EquationState(Configure):
 	""" """
-	def __init__(self, *args):
+	def __init__(self, log_file=False, *args):
 		super().__init__(*args)
+		self.log_file = log_file
 
 		#self.attribute_map = {
 		#	'forces':'get_forces',
@@ -25,12 +27,17 @@ class EquationState(Configure):
 		#	'momenta':'get_momenta',
 		#	'velocities':'get_velocities'
 		#}
+
 		eos_range = self.mode_params['range'].split()
 		eos_range = [float(s) for s in eos_range]
 		self.start, self.stop, self.num_points = eos_range
 		self.num_points = int(self.num_points)
 
 		self.ext = self.output_structure.split('.')[-1]
+
+		self.data = {}
+		#mode_param_df = pd.DataFrame.from_dict(mode_input, orient='index', columns=[''])	
+		#self.out = pd.DataFrame.from_dict(self.data, orient='index', columns=['V0', 'E0', 'B'])
 
 	def run(self):
 		""" """
@@ -40,13 +47,19 @@ class EquationState(Configure):
 				start = datetime.datetime.now()
 			
 			self.size_variation(i, a)
-
-			self.run_eos(a)
+			self.data[i] = self.run_eos(i, a)
+			
 
 			if len(self.atoms) > 1:
 				end = datetime.datetime.now()
 				print(f'Structure {i+1} of ({len(self.atoms)}) completed after {end-start}\n')
-	
+		
+		self.out = pd.DataFrame.from_dict(self.data, orient='index', columns=['V0 [Å^3]', 'E0 [eV]', 'B [GPa]'])
+		print(self.out)
+		
+		if self.log_file:
+			with open(self.log_file, 'a') as f:
+				print(self.out, file=f)
 
 
 	def size_variation(self, index, atoms):
@@ -61,7 +74,7 @@ class EquationState(Configure):
 			traj.write(atoms)
 
 
-	def run_eos(self, atoms):
+	def run_eos(self, index, atoms):
 		""" """
 		configs = read(self.traj_name+'@:0'+f'{self.num_points}')
 		
@@ -75,6 +88,12 @@ class EquationState(Configure):
 		Eout = f'minimum energy: {e0:.4f} eV,'
 		Vout = f'minimum volume: {v0:.4f} Å^3'
 		print(Pout, Eout, Vout)
+
+		png_name = self.output_structure.replace('.'+self.ext, f'_{index}.png')
+
+		eos.plot(png_name)
+
+		return [v0, e0, B]
 
 
 

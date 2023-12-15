@@ -186,6 +186,7 @@ def main():
 
 		# Initiate a equation of state object
 		setup = eos.EquationState(
+			log_file,
 			mode_input,
 			global_input,
 			path+input_structure,
