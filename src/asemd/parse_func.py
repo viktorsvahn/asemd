@@ -79,8 +79,8 @@ thermostat timescale:\tCharacteristic timescale of Nosé-Hoover thermostat (NPT)
 	parser.add_argument(
 		'mode',
 		metavar='mode',
-		choices=['EMIN', 'SP', 'NVE', 'NVT', 'NPT'],
-		help='Sets the run-mode to EMIN, SP, NVE, NVT or NPT.'
+		choices=['EMIN', 'SP', 'EOS', 'NVE', 'NVT', 'NPT'],
+		help='Sets the run-mode to EMIN, SP, EOS, NVE, NVT or NPT.'
 	)
 	parser.add_argument(
 		'input',
@@ -98,7 +98,7 @@ thermostat timescale:\tCharacteristic timescale of Nosé-Hoover thermostat (NPT)
 		'-o',
 		'--output',
 		metavar='file.xyz',
-		help='Overrides output name. Possible to use .pdb and .traj in addition to .xyz-files.'
+		help='Overrides output name. Possible to use .pdb and .traj in addition to\n.xyz-files.'
 	)
 
 	parser.add_argument(
@@ -121,7 +121,7 @@ thermostat timescale:\tCharacteristic timescale of Nosé-Hoover thermostat (NPT)
 	parser.add_argument(
 		'--start',
 		dest='STARTING_INDEX',
-		help='Overrides the starting index of trajectory inputs. If starting from last dump, set -1.'
+		help='Overrides the starting index of trajectory inputs. If starting from\nlast dump, set -1.'
 	)
 
 	parser.add_argument(
@@ -165,5 +165,11 @@ thermostat timescale:\tCharacteristic timescale of Nosé-Hoover thermostat (NPT)
 		metavar='external_stress',
 		help='Overrides the external stress tensor used in the NPT ensemble.'
 	)
+	#parser.add_argument(
+	#	'--range',
+	#	dest='eos_range',
+	#	metavar='start stop num-points',
+	#	help='Overrides the scaling range used in equation of state determination,\ne.g. 0.95 1.05 5.'
+	#)
 
 	return parser

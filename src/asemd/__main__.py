@@ -11,8 +11,9 @@ import copy
 import pandas as pd
 import numpy as np
 
-import asemd.single_point as sp
 import asemd.energy_min as emin
+import asemd.single_point as sp
+import asemd.equation_of_state as eos
 import asemd.md as md
 import asemd.parse_func as pf
 
@@ -54,6 +55,7 @@ ensemble_methods = {
 modes = {
 	'EMIN':'Energy minimisation',
 	'SP':'Single point energy calculation',
+	'EOS':'Equation of state',
 	'NVE':'Microcanonical ensemble',
 	'NVT':'Canonical ensemble',
 	'NPT':'Isobaric ensemble'
@@ -111,8 +113,20 @@ def main():
 				pass
 
 		# Name log file after date and mode		
-		log_file = f'{log_path}{time.strftime("%Y%m%d")}_{mode}.log'
+		#log_file = f'{log_path}{}_{mode}.log'
+
+		if 'name' in mode_input:
+			log_name = mode_input['name']
+			name_test = False
+		else:
+			log_name = time.strftime("%Y%m%d")
+			name_test = True
+		# Name log file after date and mode		
+		log_file = f'{log_path}{mode}_{log_name}.log'
+
+
 	else:
+		name_test = False
 		log_file = None
 
 
@@ -162,6 +176,22 @@ def main():
 			path+input_structure,
 			output_structure
 		)
+
+
+
+	# EQUATION OF STATE
+	elif mode == 'EOS':
+
+		
+
+		# Initiate a equation of state object
+		setup = eos.EquationState(
+			mode_input,
+			global_input,
+			path+input_structure,
+			output_structure
+		)
+	
 
 	# INITIALISE ENSEMBLE VARIABLES ###########################################
 	elif mode in ensemble_methods.keys():
@@ -252,11 +282,31 @@ def main():
 	# RUN SETUP ###############################################################	
 	print(f'Running from: {path}')
 	
+	# Remove certain params from dataframe printout
+	df_hide_mode = [
+		'name'
+	]
+	df_hide_global = [
+		'log path'
+	]
+
+	for param in df_hide_mode:
+		try:
+			mode_input.pop(param)
+		except:
+			pass
+	
+	for param in df_hide_global:
+		try:
+			global_input.pop(param)
+		except:
+			pass		
+
 	# Stack input variables in a dataframe
-	mode_param_df = pd.DataFrame.from_dict(mode_input, orient='index', columns=[''])
-	global_input.pop('log path')
+	mode_param_df = pd.DataFrame.from_dict(mode_input, orient='index', columns=[''])	
 	global_param_df = pd.DataFrame.from_dict(global_input, orient='index', columns=[''])
 	param_df = pd.concat([global_param_df, mode_param_df])
+
 
 	if (mode == 'NPT') and (PFACTOR == None):
 		print(f'Mode: NVT (Canonical ensemble using a Nosé-Hoover thermostat.)')
@@ -280,6 +330,14 @@ def main():
 
 
 	# Runs the setup initialised for a given mode
+	if name_test:
+		setup.error_msg(
+			'Warning:',
+			'No name for this run has been specified!',
+			'Log file will now be named by date.',
+			'Running multiple instances of the same mode simultaneously will result in\noutputs being mixed up.',
+		)
+	
 	setup.run()
 
 

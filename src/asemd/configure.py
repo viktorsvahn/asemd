@@ -25,6 +25,7 @@ class Configure(object):
 		self.global_params = global_params
 		self.input_structure = input_structure
 		self.output_structure = output_structure
+		
 
 
 		# Switch that allows one to force new output files to overwrite old ones
@@ -157,15 +158,17 @@ class Configure(object):
 			else:
 				raise TypeError('Input structure might be a .traj-file. Change the input extention to .traj and try again.')
 		"""
+
 		if 'structure handle' in self.mode_params:
 			self.structure_handle = self.mode_params['structure handle']
 		else:
 			self.structure_handle = False
 		
+		# Logical test to see if specified handles are present in dataset
+		# Used for printing warnings		
 		info = [a.info.keys() for a in self.atoms]
 		self.handle_test = {(self.structure_handle in handle) for handle in info}
 		
-
 
 	def acquire_calc(self, arg=None):
 		"""Method that acquires a chose calculator. If no argument is passed,
@@ -181,6 +184,19 @@ class Configure(object):
 			calculator = __import__(arg).calculator
 		return calculator
 
+	def load_structure(self, filename):
+		"""Reads input files and stores them in an iterable list."""
+		if 'traj' in self.input_structure:
+			structure_list = [Trajectory(filename)[self.STRUCTURE_INDEX]]
+		else:
+			if self.STRUCTURE_INDEX:
+				structure_list = [read(filename, ':')[self.STRUCTURE_INDEX]]
+			else:
+				structure_list = read(filename, ':')
+
+		return structure_list
+	
+
 	def print_energy(self, atoms=None):
 		"""Print potential-, kinetic energy (together with temperature) and the 
 		total energy of the system.
@@ -193,18 +209,6 @@ class Configure(object):
 		temp = ekin/(1.5*units.kB)
 		print(f'Energy per atom: Epot: {epot:.4f} eV, Ekin: {ekin:.4f} eV (T: {temp:3.0f} K), Etot: {etot:.4} eV')
 
-	def load_structure(self, filename):
-		"""Reads input files and stores them in an iterable list."""
-		if 'traj' in self.input_structure:
-			structure_list = [Trajectory(filename)[self.STRUCTURE_INDEX]]
-		else:
-			if self.STRUCTURE_INDEX:
-				structure_list = [read(filename, ':')[self.STRUCTURE_INDEX]]
-			else:
-				structure_list = read(filename, ':')
-
-		return structure_list
-
 	def error_msg(self, *args):
 		"""Envelopes (and prints) error messages with lines and adds empty 
 		lines between each argument."""
@@ -215,10 +219,8 @@ class Configure(object):
 
 	def structure_info(self, atoms):
 		"""Prints structure info (if any) from the header in an input file to
-		stdout.
-
-		Additional data can be printed by specifying data='..' as an argument."""
-		
+		stdout."""
+		# Tries to only print specified handle, otherwise prints any
 		if self.structure_handle and (True in self.handle_test):
 			try:
 				print(f'{self.structure_handle}: {atoms.info[self.structure_handle]}')

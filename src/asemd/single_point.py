@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import os
+import datetime
 import numpy as np
 
 from ase.io import read, write
@@ -68,7 +69,11 @@ class SinglePoint(Configure):
 		# and second='get_forces', then attr=a.get_forces. The added parenthesis
 		# results in the correct expression a.get_forces().
 		for i, a in enumerate(self.atoms):
+			# Prints timestamps and indices
+			if len(self.atoms) > 1:
+				start = datetime.datetime.now()
 			print(f'Running structure: {i+1} (of {len(self.atoms)})')
+			
 			try:
 				a.arrays.pop(attribute)
 			except:
@@ -81,6 +86,10 @@ class SinglePoint(Configure):
 				# structres. This requires append=True to be set. 
 				# Why this occurs is unclear.
 				self.save_structure(a)
+
+			if len(self.atoms) > 1:
+				end = datetime.datetime.now()
+				print(f'Completed after {end-start}\n')
 
 	def save_structure(self, structure):
 		"""If an output filename has been given, the the output is saved to a

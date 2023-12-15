@@ -44,6 +44,8 @@ class EnergyMinimisation(Configure):
 		self.DUMP_INTERVAL = DUMP_INTERVAL
 		self.log_file = log_file
 
+
+		# NOT IMPLEMENTED
 		FRAC = 0.15
 		self.LAST_STEPS = math.ceil(self.STEPS*FRAC)
 		self.FIRST_STEPS = self.STEPS - self.LAST_STEPS
@@ -82,9 +84,10 @@ class EnergyMinimisation(Configure):
 			)
 
 		for i, a in enumerate(self.atoms):
+			self.printout = []
+
 			if len(self.atoms) > 1:
-				start = datetime.datetime.now()
-			print(f'Running structure: {i+1} (of {len(self.atoms)})')			
+				start = datetime.datetime.now()		
 
 
 			# Initiate dynamic optimiser object
@@ -96,10 +99,16 @@ class EnergyMinimisation(Configure):
 				self.dyn = opt(a, logfile=self.log_file)
 			
 
-			# Logging and svaing
-			#self.save_traj(a) currently not working. Must solve how to deal with indices and such 
+			# Logging and saving
+			#if self.output_structure and 'traj' in self.output_structure:
+			#	print('FFODSHOSDFHSDFOHFGSDFOHNSDFS')
+			#	self.save_traj(a)
+			
 			self.structure_info(a)
 			#self.dyn.attach(self.print_energy, interval=self.DUMP_INTERVAL)
+
+
+
 
 			# Run the minimisation
 			if (self.STEPS is None) and (self.FMAX is not None):
@@ -144,18 +153,20 @@ class EnergyMinimisation(Configure):
 					print(f'Step: {STEP+self.FIRST_STEPS+1}', eout, fout)
 
 			"""
+
+			####### Inefficient! Need to extract this from the dyn object!
 			fx, fy, fz = a.get_forces()[:,0], a.get_forces()[:,1], a.get_forces()[:,2]
 			forces = (fx**2 + fy**2 + fz**2)**0.5
 			energy = a.get_potential_energy()
 
-			eout = f'Potential energy: {energy:.4f}'
+			eout = f'potential energy: {energy:.4f}'
 			fout = f'max force: {max(forces):.4f}'
 			print(f'Step: {self.STEPS}', eout, fout)
 
 			
 			if len(self.atoms) > 1:
 				end = datetime.datetime.now()
-				print(f'Completed after {end-start}\n')
+				print(f'Structure {i+1} of ({len(self.atoms)}) completed after {end-start}\n')
 
 			self.save_structure(a)	
 
