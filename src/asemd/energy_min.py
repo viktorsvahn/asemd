@@ -115,7 +115,7 @@ class EnergyMinimisation(Configure):
 				self.dyn.run(fmax=self.FMAX)
 	
 			elif (self.STEPS is not None) and (self.FMAX is None):
-				self.dyn.run(steps=self.FIRST_STEPS)
+				self.dyn.run(steps=self.FIRST_STEPS, fmax=1e-6)
 
 			elif (self.STEPS is not None) and (self.FMAX is not None):
 				self.dyn.run(steps=self.FIRST_STEPS, fmax=self.FMAX)
