@@ -27,6 +27,12 @@ class EquationState(Configure):
 		#	'momenta':'get_momenta',
 		#	'velocities':'get_velocities'
 		#}
+		if 'method' in self.mode_params:
+			self.method = self.mode_params['method']
+		else:
+			self.method = 'birchmurnaghan'
+			self.mode_params['method'] = self.method
+
 
 		eos_range = self.mode_params['range'].split()
 		eos_range = [float(s) for s in eos_range]
@@ -93,12 +99,23 @@ class EquationState(Configure):
 		# Extract volumes and energies:
 		volumes = [conf.get_volume() for conf in configs]
 		energies = [conf.get_potential_energy() for conf in configs]
-		eos = EquationOfState(volumes, energies)
+
+		# Removes possible spaces and hyphens from method name
+		try:
+			self.method = self.method.replace(' ', '')
+		except:
+			pass
+		try:
+			self.method = self.method.replace('-', '')
+		except:
+			pass
+		eos = EquationOfState(volumes, energies, eos=self.method.lower())
 		v0, e0, B = eos.fit()
 
 		Pout = f'Pressure: {B/units.kJ*1.0e24:.4f},'
 		Eout = f'minimum energy: {e0:.4f} eV,'
 		Vout = f'minimum volume: {v0:.4f} Å^3'
+		######## NO GOODNESS OF FIT MEASURE!
 		print(Pout, Eout, Vout)
 
 		#if self.output_structure is False:
