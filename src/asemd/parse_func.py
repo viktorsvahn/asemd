@@ -41,8 +41,11 @@ NVT:
 
 GLOBAL INPUT:
 input structure:\tSpecifies the starting structure.
-starting index:\tSpecifies the index used in reading .traj-input structures. 
-			Defaults to -1
+calculator:\t\tSpecifies the ASE calculator to be used. If using a custom 
+			calculator, this should be the name of a python script that contain
+			the proper calculator definition.
+#starting index:\tSpecifies the index used in reading .traj-input structures. 
+#			Defaults to -1
 box size:\t\tWidth of the simulation box for x, y and z.
 periodic:\t\tBoolean for periodic boundary conditions.
 log path:\t\tPath to log file.
@@ -50,9 +53,6 @@ log path:\t\tPath to log file.
 MODE INPUT:
 optimiser:\t\tMinimisation optimiser. Choose between BFGS, GPMin or MDMin.
 output:\t\t\tName of output file with extention.
-calculator:\t\tSpecifies the ASE calculator to be used. If using a custom 
-			calculator, this should be the name of a python script that contain
-			the proper calculator definition.
 temperature:\t\tSpecifies the temperature in Kelvin used in simulations.
 time step:\t\tWidth of the time step in fs.
 steps:\t\t\tNumber of simulation steps.
@@ -62,6 +62,9 @@ friction:\t\tSets the friction constant for the Langevin thermostat (NVT).
 pfactor:\t\tThe pressure factor used for the parrinello-Rahman barostat (NPT).
 external stress:\tExternal stress tensor used in NPT ensembles.
 thermostat timescale:\tCharacteristic timescale of Nosé-Hoover thermostat (NPT).
+range:\t\t\tThe range used when fitting an eauation of state. Set start stop and
+\t\t\tnum-points.
+method\t\t\tThe equation of state method. Default is Birch-Murnaghan.
 '''
 	)
 	parser.add_argument(
