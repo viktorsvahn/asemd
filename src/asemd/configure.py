@@ -72,7 +72,6 @@ class Configure(object):
 		#self.atoms = self.load_structure(self.input_structure)
 		atoms = self.load_structure(self.input_structure)
 		self.atoms = [Atoms(a.symbols, a.get_positions()) for a in atoms]
-		print(self.atoms)
 		for a in self.atoms:
 
 			# Terminate if no cell size in input
