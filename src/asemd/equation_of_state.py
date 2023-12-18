@@ -33,7 +33,10 @@ class EquationState(Configure):
 		self.start, self.stop, self.num_points = eos_range
 		self.num_points = int(self.num_points)
 
-		self.ext = self.output_structure.split('.')[-1]
+		# Needed in order to make tmp files with same name as intended output
+		if self.output_structure:
+			self.ext = self.output_structure.split('.')[-1]
+
 
 		self.data = {}
 		#mode_param_df = pd.DataFrame.from_dict(mode_input, orient='index', columns=[''])	
@@ -61,10 +64,16 @@ class EquationState(Configure):
 			with open(self.log_file, 'a') as f:
 				print(self.out, file=f)
 
+		if self.output_structure is False:
+			os.remove(self.traj_name)
+
 
 	def size_variation(self, index, atoms):
 		""" """
-		self.traj_name = self.output_structure.replace('.'+self.ext, f'_{index}.traj')
+		if self.output_structure:
+			self.traj_name = self.output_structure.replace('.'+self.ext, f'_{index}.traj')
+		else:
+			self.traj_name = 'eos_test.traj'
 		traj = Trajectory(self.traj_name, 'w')
 		
 
@@ -89,9 +98,10 @@ class EquationState(Configure):
 		Vout = f'minimum volume: {v0:.4f} Å^3'
 		print(Pout, Eout, Vout)
 
-		png_name = self.output_structure.replace('.'+self.ext, f'_{index}.png')
-
-		eos.plot(png_name)
+		if self.output_structure if False:
+			
+			png_name = self.output_structure.replace('.'+self.ext, f'_{index}.png')
+			eos.plot(png_name)
 
 		return [v0, e0, B]
 
