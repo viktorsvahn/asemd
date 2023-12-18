@@ -37,7 +37,7 @@ class SinglePoint(Configure):
 			'momenta':'get_momenta',
 			'velocities':'get_velocities'
 		}
-
+		print(self.output_structure)
 
 	def run(self):
 		"""Runs the single point evaluation of the properties that have been
@@ -59,6 +59,7 @@ class SinglePoint(Configure):
 				self.acquire_property(attribute)			
 		else:
 			pass
+		self.save_structure(None)
 
 
 	def acquire_property(self, attribute):
@@ -74,18 +75,22 @@ class SinglePoint(Configure):
 				start = datetime.datetime.now()
 			print(f'Running structure: {i+1} (of {len(self.atoms)})')
 			
-			try:
-				a.arrays.pop(attribute)
-			except:
-				prop = getattr(a, self.attribute_map[attribute])()
-				a.arrays[attribute] = prop
+
+			prop = getattr(a, self.attribute_map[attribute])()
+			a.arrays[attribute] = prop
+			
+			#try:
+			#	a.arrays.pop(attribute)
+			#except:
+			#	prop = getattr(a, self.attribute_map[attribute])()
+			#	a.arrays[attribute] = prop
 
 				# It is important to have this method here, and not under 
 				# self.run. Otherwise ASE will sometimes not forget previous 
 				# evaluations and instead save duplicate evaluations on multiple 
 				# structres. This requires append=True to be set. 
 				# Why this occurs is unclear.
-				self.save_structure(a)
+				#self.save_structure(a)
 
 			if len(self.atoms) > 1:
 				end = datetime.datetime.now()
@@ -95,6 +100,7 @@ class SinglePoint(Configure):
 		"""If an output filename has been given, the the output is saved to a
 		file by appending all atoms objects to the file."""
 		if self.output_structure:
-			write(self.output_structure, structure, append=True)
+			#write(self.output_structure, structure, append=True)
+			write(self.output_structure, self.atoms)
 		else:
 			pass

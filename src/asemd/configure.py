@@ -9,6 +9,7 @@ import time
 from ase.io import read, iread, write
 from ase.io.trajectory import Trajectory
 from ase.calculators.emt import EMT
+from ase import Atoms
 from ase import units
 
 
@@ -66,9 +67,14 @@ class Configure(object):
 			else:
 				self.STRUCTURE_INDEX = False
 
+
 		# Generate atoms-object list from input structure(s)
-		self.atoms = self.load_structure(self.input_structure)
+		#self.atoms = self.load_structure(self.input_structure)
+		atoms = self.load_structure(self.input_structure)
+		self.atoms = [Atoms(a.symbols, a.get_positions()) for a in atoms]
+		print(self.atoms)
 		for a in self.atoms:
+
 			# Terminate if no cell size in input
 			try:
 				a.set_cell(self.size)
@@ -97,6 +103,8 @@ class Configure(object):
 					'in the YAML input file.'
 				)
 				sys.exit()
+
+		print(self.atoms)
 
 		# If previous output exist, create new files datetime handle
 		if self.output_structure and (
