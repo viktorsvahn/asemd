@@ -70,6 +70,7 @@ class SinglePoint(Configure):
 		# and second='get_forces', then attr=a.get_forces. The added parenthesis
 		# results in the correct expression a.get_forces().
 		for i, a in enumerate(self.atoms):
+			
 			# Prints timestamps and indices
 			if len(self.atoms) > 1:
 				start = datetime.datetime.now()
