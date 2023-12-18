@@ -65,7 +65,10 @@ class EquationState(Configure):
 				print(self.out, file=f)
 
 		if self.output_structure is False:
-			os.remove(self.traj_name)
+			try:
+				os.remove(self.traj_name)
+			except:
+				pass
 
 
 	def size_variation(self, index, atoms):
@@ -98,10 +101,9 @@ class EquationState(Configure):
 		Vout = f'minimum volume: {v0:.4f} Å^3'
 		print(Pout, Eout, Vout)
 
-		if self.output_structure if False:
-			
-			png_name = self.output_structure.replace('.'+self.ext, f'_{index}.png')
-			eos.plot(png_name)
+		#if self.output_structure is False:
+		#	png_name = self.output_structure.replace('.'+self.ext, f'_{index}.png')
+		#	eos.plot(png_name)
 
 		return [v0, e0, B]
 
