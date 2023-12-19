@@ -58,6 +58,10 @@ class Configure(object):
 			self.size = [float(s) for s in size]
 		else:
 			self.size = False
+			self.error_msg(
+					'No geometry was set in the input.',
+					'Geometry from input file will be used, if any.'
+			)
 
 		if 'structure index' in self.mode_params:
 			self.STRUCTURE_INDEX = self.mode_params['structure index']
@@ -101,10 +105,7 @@ class Configure(object):
 			except:
 				# Would be neat to include structure-wise input parameters in
 				# the log/stdout next to each evaluation.
-				self.error_msg(
-					'No geometry was set in the input.',
-					'Geometry from input file will be used, if any.'
-				)
+				pass
 				#self.error_msg(
 				#	'CRITICAL ERROR',
 				#	'Input file contains no cell parameters!',
