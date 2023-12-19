@@ -69,14 +69,17 @@ class Configure(object):
 				self.STRUCTURE_INDEX = False
 
 
+
+
 		# Generate atoms-object list from input structure(s)
 		#self.atoms = self.load_structure(self.input_structure)
 		atoms = self.load_structure(self.input_structure)
-		self.atoms = [Atoms(
-			a.symbols,
-			a.get_positions(),
-			cell=a.get_cell(),
-			pbc=a.get_pbc()
+		self.atoms = [
+			Atoms(
+				a.symbols,
+				a.get_positions(),
+				cell=a.get_cell(),
+				pbc=a.get_pbc()
 		) for a in atoms]
 		#if 'box size' in self.global_params:
 		#	if 'periodic' in self.global_params:
@@ -96,23 +99,20 @@ class Configure(object):
 			try:
 				a.set_cell(self.size)
 			except:
-				if a.get_cell() is not None:
-					self.error_msg(
-
-					)
-				else:
-					self.error_msg(
-						'No geometry was set in the input.',
-						'Geometry from input file will be used, if any'
-					)
-					#self.error_msg(
-					#	'CRITICAL ERROR',
-					#	'Input file contains no cell parameters!',
-					#	'Please set cell size (Å) manually by adding:',
-					#	'Global:\n  box size:  x y z',
-					#	'to the YAML input file.'
-					#)
-				#	sys.exit()
+				# Would be neat to include structure-wise input parameters in
+				# the log/stdout next to each evaluation.
+				self.error_msg(
+					'No geometry was set in the input.',
+					'Geometry from input file will be used, if any'
+				)
+				#self.error_msg(
+				#	'CRITICAL ERROR',
+				#	'Input file contains no cell parameters!',
+				#	'Please set cell size (Å) manually by adding:',
+				#	'Global:\n  box size:  x y z',
+				#	'to the YAML input file.'
+				#)
+				#sys.exit()
 			
 			# Assing PBC status
 			a.set_pbc(self.pbc)
