@@ -103,7 +103,7 @@ class Configure(object):
 				# the log/stdout next to each evaluation.
 				self.error_msg(
 					'No geometry was set in the input.',
-					'Geometry from input file will be used, if any'
+					'Geometry from input file will be used, if any.'
 				)
 				#self.error_msg(
 				#	'CRITICAL ERROR',
@@ -128,7 +128,7 @@ class Configure(object):
 					'Global/MODE:\n  calculator: EMT/name_of_script',
 					'in the YAML input file.'
 				)
-				sys.exit()
+				#sys.exit()
 
 
 		# If previous output exist, create new files datetime handle
