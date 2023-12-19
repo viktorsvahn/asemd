@@ -72,7 +72,18 @@ class Configure(object):
 		# Generate atoms-object list from input structure(s)
 		#self.atoms = self.load_structure(self.input_structure)
 		atoms = self.load_structure(self.input_structure)
-		self.atoms = [Atoms(a.symbols, a.get_positions()) for a in atoms]
+		if 'box size' in self.global_params:
+			if 'periodic' in self.global_params:
+				self.atoms = [Atoms(a.symbols, a.get_positions(), cell=self.size, pbc=True) for a in atoms]
+			else:
+				self.atoms = [Atoms(a.symbols, a.get_positions(), cell=self.size, pbc=False) for a in atoms]
+		else:
+			if 'periodic' in self.global_params:
+				self.atoms = [Atoms(a.symbols, a.get_positions(), cell=a.get_cell(), pbc=True) for a in atoms]
+			else:
+				self.atoms = [Atoms(a.symbols, a.get_positions(), cell=a.get_cell(), pbc=False) for a in atoms]
+
+
 		for a in self.atoms:
 
 			# Terminate if no cell size in input
