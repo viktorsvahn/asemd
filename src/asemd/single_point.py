@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 
 from ase.io import read, write
+from ase.calculators.emt import EMT
 
 from asemd.configure import Configure
 
@@ -64,6 +65,7 @@ class SinglePoint(Configure):
 		- velocities"""
 		for i, a in enumerate(self.atoms):
 			out = {}
+			a.calc = EMT()
 			a.calc = self.acquire_calc(self.calculator)
 
 			# Prints timestamps and indices
@@ -128,7 +130,12 @@ class SinglePoint(Configure):
 		# first and second arguments as first.second. For example, if first=a 
 		# and second='get_forces', then attr=a.get_forces. The added parenthesis
 		# results in the correct expression a.get_forces().
-		
+
+		try:
+			atoms.arrays.pop(attribute)
+		except:
+			pass
+
 		prop = getattr(atoms, self.attribute_map[attribute])()
 		atoms.arrays[attribute] = prop
 		return prop
