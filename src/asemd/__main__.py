@@ -113,8 +113,6 @@ def main():
 				pass
 
 		# Name log file after date and mode		
-		#log_file = f'{log_path}{}_{mode}.log'
-
 		if 'name' in mode_input:
 			log_name = mode_input['name']
 			name_test = False
@@ -123,7 +121,6 @@ def main():
 			name_test = True
 		# Name log file after date and mode		
 		log_file = f'{log_path}{mode}_{log_name}.log'
-
 
 	else:
 		name_test = False
@@ -178,11 +175,8 @@ def main():
 		)
 
 
-
 	# EQUATION OF STATE
 	elif mode == 'EOS':
-
-		
 
 		# Initiate a equation of state object
 		setup = eos.EquationState(
