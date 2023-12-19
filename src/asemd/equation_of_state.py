@@ -62,7 +62,7 @@ class EquationState(Configure):
 				print(f'Structure {i+1} of ({len(self.atoms)}) completed after {end-start}\n')
 		
 		self.out = pd.DataFrame.from_dict(self.data, orient='index', columns=['V0 [Å^3]', 'E0 [eV]', 'B [GPa]'])
-		if len(self.atoms < 100)
+		if len(self.atoms) < 100:
 			print(self.out.to_string())
 		else:
 			self.error_msg(
