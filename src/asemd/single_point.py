@@ -65,7 +65,7 @@ class SinglePoint(Configure):
 		- velocities"""
 		for i, a in enumerate(self.atoms):
 			out = {}
-			a.calc = EMT()
+			del a.calc
 			a.calc = self.acquire_calc(self.calculator)
 
 			# Prints timestamps and indices
