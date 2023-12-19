@@ -36,7 +36,8 @@ class SinglePoint(Configure):
 			'forces':'get_forces',
 			'energies':'get_potential_energies',
 			'momenta':'get_momenta',
-			'velocities':'get_velocities'
+			'velocities':'get_velocities',
+			'charges':'get_charges'
 		}
 
 		self.output_map = {
@@ -44,7 +45,8 @@ class SinglePoint(Configure):
 			'energy':'Potential energy [eV]',
 			'energies':'Max. energies [eV]',
 			'momenta':'Max. momentum [kg*m/s]',
-			'velocities':'Max. velocity [m/s]'
+			'velocities':'Max. velocity [m/s]',
+			'charges':'Max. charge'
 		}
 
 		self.data = {}
@@ -60,19 +62,49 @@ class SinglePoint(Configure):
 		- momenta
 		- stress
 		- velocities"""
-		# Checks to see if properties have been assigned correctly in the input
-		if ('evaluate' in self.mode_params) and (
-			self.mode_params['evaluate'] is not None):
-			self.evaluate = set(self.mode_params['evaluate'])
+		for i, a in enumerate(self.atoms):
+			out = {}
 
-			# Runs evaluation on all attributes
-			for attribute in self.evaluate:
-				self.acquire_property(attribute)			
-		else:
-			pass
+			# Prints timestamps and indices
+			if len(self.atoms) > 1:
+				start = datetime.datetime.now()
+			print(f'Running structure: {i+1} (of {len(self.atoms)})')
+
+			# Checks to see if properties have been assigned correctly in the input
+			if ('evaluate' in self.mode_params) and (
+				self.mode_params['evaluate'] is not None):
+				self.evaluate = set(self.mode_params['evaluate'])
+
+				# Runs evaluation on all attributes
+				for attribute in self.evaluate:
+					print(f'Evaluating: {attribute}')
+
+					# Evaluate property
+					prop = self.acquire_property(attribute, a)			
+					
+					# Evaluates maximum attribute qty
+					# If attribute is a vector-qty, evaluate max norm
+					if attribute is ('forces' or 'velocities' or 'momenta'):
+						propx, propy, propz = prop[:,0], prop[:,1], prop[:,2]
+						prop_vectors = (propx**2 + propy**2 + propz**2)**0.5
+						out[self.output_map[attribute]] = np.max(prop_vectors)
+					else:
+						out[self.output_map[attribute]] = np.max(prop)
+			else:
+				pass
+
+			# Stack attribute evaluations with potential energy
+			energy = a.get_potential_energy()
+			out[self.output_map['energy']] = energy
+			self.data[i] = out
+
+			if len(self.atoms) > 1:
+				end = datetime.datetime.now()
+				print(f'Potential energy: {energy:.4f} eV')
+				print(f'Completed after {end-start}\n')
 
 		#print(self.data)
-		self.out = pd.DataFrame.from_dict(self.data, orient='index')#, columns=['V0 [Å^3]', 'E0 [eV]', 'B [GPa]'])
+		self.out = pd.DataFrame.from_dict(self.data, orient='index')
 		print(self.out)
 		
 		if self.log_file:
@@ -82,13 +114,22 @@ class SinglePoint(Configure):
 		self.save_structure(None)
 
 
-	def acquire_property(self, attribute):
+	def acquire_property(self, attribute, atoms):
 		"""Evaluates the input structure for the properties specified in the 
 		input."""
 		# This is achieved using the getattr-method which concatenates the 
 		# first and second arguments as first.second. For example, if first=a 
 		# and second='get_forces', then attr=a.get_forces. The added parenthesis
 		# results in the correct expression a.get_forces().
+		
+		prop = getattr(atoms, self.attribute_map[attribute])()
+		atoms.arrays[attribute] = prop
+		return prop
+
+		
+
+		
+		"""		
 		for i, a in enumerate(self.atoms):
 			out = {}
 			
@@ -137,6 +178,7 @@ class SinglePoint(Configure):
 			if len(self.atoms) > 1:
 				end = datetime.datetime.now()
 				print(f'Completed after {end-start}\n')
+		"""
 
 	def save_structure(self, structure):
 		"""If an output filename has been given, the the output is saved to a
