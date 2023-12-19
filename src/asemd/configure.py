@@ -38,10 +38,14 @@ class Configure(object):
 			self.global_params['overwrite'] = self.overwrite
 
 		# Raise error if no calcualtor has been specified
-		if 'calculator' in self.global_params:
-			self.calculator = self.global_params['calculator']
-		elif 'calculator' in self.mode_params:
+		if 'calculator' in self.mode_params:
 			self.calculator = self.mode_params['calculator']
+			try:
+				self.global_params.pop('calculator')
+			except:
+				pass
+		elif 'calculator' in self.global_params:
+			self.calculator = self.global_params['calculator']
 		else:
 			self.calculator = False
 
