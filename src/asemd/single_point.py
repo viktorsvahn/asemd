@@ -64,6 +64,7 @@ class SinglePoint(Configure):
 		- velocities"""
 		for i, a in enumerate(self.atoms):
 			out = {}
+			a.calc = self.acquire_calc(self.calculator)
 
 			# Prints timestamps and indices
 			if len(self.atoms) > 1:
@@ -79,7 +80,6 @@ class SinglePoint(Configure):
 				for attribute in self.evaluate:
 					print(f'Evaluating: {attribute}')
 
-					a.calc = self.acquire_calc(self.calculator)
 					# Evaluate property
 					prop = self.acquire_property(attribute, a)			
 					
