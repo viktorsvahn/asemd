@@ -79,6 +79,12 @@ class SinglePoint(Configure):
 			prop = getattr(a, self.attribute_map[attribute])()
 			a.arrays[attribute] = prop
 			
+			###################################################################
+			# This block should be used if 'atoms' is replaced by self.atoms
+			# at line 74 in configure.py. Then, self.save_structure should be 
+			# removed from self.run and write in self.save_structure should have
+			# append=True set.
+			###################################################################
 			#try:
 			#	a.arrays.pop(attribute)
 			#except:
