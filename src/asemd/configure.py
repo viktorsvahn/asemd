@@ -87,17 +87,17 @@ class Configure(object):
 		for a in self.atoms:
 
 			# Terminate if no cell size in input
-			try:
-				a.set_cell(self.size)
-			except:
-				self.error_msg(
-					'CRITICAL ERROR',
-					'Input file contains no cell parameters!',
-					'Please set cell size (Å) manually by adding:',
-					'Global:\n  box size:  x y z',
-					'to the YAML input file.'
-				)
-				sys.exit()
+			#try:
+			#	a.set_cell(self.size)
+			#except:
+			#	self.error_msg(
+			#		'CRITICAL ERROR',
+			#		'Input file contains no cell parameters!',
+			#		'Please set cell size (Å) manually by adding:',
+			#		'Global:\n  box size:  x y z',
+			#		'to the YAML input file.'
+			#	)
+			#	sys.exit()
 			
 			# Assing PBC status
 			a.set_pbc(self.pbc)
