@@ -105,7 +105,13 @@ class SinglePoint(Configure):
 
 		#print(self.data)
 		self.out = pd.DataFrame.from_dict(self.data, orient='index')
-		print(self.out)
+		if len(self.atoms < 100)
+			print(self.out.to_string())
+		else:
+			self.error_msg(
+				'Too many structures to print tabulated summary of output.',
+				'Please refer to the log file stored under logs/.'
+			)
 		
 		if self.log_file:
 			with open(self.log_file, 'a') as f:
