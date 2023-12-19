@@ -3,6 +3,7 @@
 import os
 import datetime
 import numpy as np
+import pandas as pd
 
 from ase.io import read, write
 
@@ -27,16 +28,27 @@ class SinglePoint(Configure):
 		- Momenta
 		- Stress
 		- Velocities"""
-	def __init__(self, *args):
+	def __init__(self, log_file, *args):
 		super().__init__(*args)
+		self.log_file = log_file
 
 		self.attribute_map = {
 			'forces':'get_forces',
 			'energies':'get_potential_energies',
 			'momenta':'get_momenta',
-			'momenta':'get_momenta',
 			'velocities':'get_velocities'
 		}
+
+		self.output_map = {
+			'forces':'Max. force [eV/Å]',
+			'energy':'Potential energy [eV]',
+			'energies':'Max. energies [eV]',
+			'momenta':'Max. momentum [kg*m/s]',
+			'velocities':'Max. velocity [m/s]'
+		}
+
+		self.data = {}
+
 
 	def run(self):
 		"""Runs the single point evaluation of the properties that have been
@@ -58,6 +70,15 @@ class SinglePoint(Configure):
 				self.acquire_property(attribute)			
 		else:
 			pass
+
+		#print(self.data)
+		self.out = pd.DataFrame.from_dict(self.data, orient='index')#, columns=['V0 [Å^3]', 'E0 [eV]', 'B [GPa]'])
+		print(self.out)
+		
+		if self.log_file:
+			with open(self.log_file, 'a') as f:
+				print(self.out, file=f)
+
 		self.save_structure(None)
 
 
@@ -69,6 +90,7 @@ class SinglePoint(Configure):
 		# and second='get_forces', then attr=a.get_forces. The added parenthesis
 		# results in the correct expression a.get_forces().
 		for i, a in enumerate(self.atoms):
+			out = {}
 			
 			# Prints timestamps and indices
 			if len(self.atoms) > 1:
@@ -79,6 +101,20 @@ class SinglePoint(Configure):
 			prop = getattr(a, self.attribute_map[attribute])()
 			a.arrays[attribute] = prop
 			
+
+			# Evaluates maximum attribute qty
+			# If attribute is a vector-qty, evaluate max norm
+			if attribute is ('energies' or 'energy'):
+				out[self.output_map[attribute]] = np.max(prop)
+			else:
+				propx, propy, propz = prop[:,0], prop[:,1], prop[:,2]
+				prop_vectors = (propx**2 + propy**2 + propz**2)**0.5
+				out[self.output_map[attribute]] = np.max(prop_vectors)
+
+			# Stack attribute evaluations with potential energy
+			out[self.output_map['energy']] = a.get_potential_energy()
+			self.data[i] = out
+
 			###################################################################
 			# This block should be used if 'atoms' is replaced by self.atoms
 			# at line 74 in configure.py. Then, self.save_structure should be 
