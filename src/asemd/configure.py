@@ -72,32 +72,47 @@ class Configure(object):
 		# Generate atoms-object list from input structure(s)
 		#self.atoms = self.load_structure(self.input_structure)
 		atoms = self.load_structure(self.input_structure)
-		if 'box size' in self.global_params:
-			if 'periodic' in self.global_params:
-				self.atoms = [Atoms(a.symbols, a.get_positions(), cell=self.size, pbc=True) for a in atoms]
-			else:
-				self.atoms = [Atoms(a.symbols, a.get_positions(), cell=self.size, pbc=False) for a in atoms]
-		else:
-			if 'periodic' in self.global_params:
-				self.atoms = [Atoms(a.symbols, a.get_positions(), cell=a.get_cell(), pbc=True) for a in atoms]
-			else:
-				self.atoms = [Atoms(a.symbols, a.get_positions(), cell=a.get_cell(), pbc=False) for a in atoms]
+		self.atoms = [Atoms(
+			a.symbols,
+			a.get_positions(),
+			cell=a.get_cell(),
+			pbc=a.get_pbc()
+		) for a in atoms]
+		#if 'box size' in self.global_params:
+		#	if 'periodic' in self.global_params:
+		#		self.atoms = [Atoms(a.symbols, a.get_positions(), cell=self.size, pbc=True) for a in atoms]
+		#	else:
+		#		self.atoms = [Atoms(a.symbols, a.get_positions(), cell=self.size, pbc=False) for a in atoms]
+		#else:
+		#	if 'periodic' in self.global_params:
+		#		self.atoms = [Atoms(a.symbols, a.get_positions(), cell=a.get_cell(), pbc=True) for a in atoms]
+		#	else:
+		#		self.atoms = [Atoms(a.symbols, a.get_positions(), cell=a.get_cell(), pbc=False) for a in atoms]
 
 
 		for a in self.atoms:
 
 			# Terminate if no cell size in input
-			#try:
-			#	a.set_cell(self.size)
-			#except:
-			#	self.error_msg(
-			#		'CRITICAL ERROR',
-			#		'Input file contains no cell parameters!',
-			#		'Please set cell size (Å) manually by adding:',
-			#		'Global:\n  box size:  x y z',
-			#		'to the YAML input file.'
-			#	)
-			#	sys.exit()
+			try:
+				a.set_cell(self.size)
+			except:
+				if a.get_cell() is not None:
+					self.error_msg(
+
+					)
+				else:
+					self.error_msg(
+						'No geometry was set in the input.',
+						'Geometry from input file will be used, if any'
+					)
+					#self.error_msg(
+					#	'CRITICAL ERROR',
+					#	'Input file contains no cell parameters!',
+					#	'Please set cell size (Å) manually by adding:',
+					#	'Global:\n  box size:  x y z',
+					#	'to the YAML input file.'
+					#)
+				#	sys.exit()
 			
 			# Assing PBC status
 			a.set_pbc(self.pbc)

@@ -167,6 +167,7 @@ def main():
 	elif mode == 'SP':
 		# Initiate a single point caluclation object
 		setup = sp.SinglePoint(
+			log_file,
 			mode_input,
 			global_input,
 			path+input_structure,

@@ -43,14 +43,12 @@ class EquationState(Configure):
 		if self.output_structure:
 			self.ext = self.output_structure.split('.')[-1]
 
-
 		self.data = {}
 		#mode_param_df = pd.DataFrame.from_dict(mode_input, orient='index', columns=[''])	
 		#self.out = pd.DataFrame.from_dict(self.data, orient='index', columns=['V0', 'E0', 'B'])
 
 	def run(self):
-		""" """
-
+		"""Evaluates an equation of state on the given set of structures."""
 		for i, a in enumerate(self.atoms):
 			if len(self.atoms) > 1:
 				start = datetime.datetime.now()
