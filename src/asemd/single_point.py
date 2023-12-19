@@ -118,7 +118,7 @@ class SinglePoint(Configure):
 		
 		if self.log_file:
 			with open(self.log_file, 'a') as f:
-				print(self.out, file=f)
+				print(self.out.to_string(), file=f)
 
 		self.save_structure(None)
 
