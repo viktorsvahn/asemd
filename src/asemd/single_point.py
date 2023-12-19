@@ -106,7 +106,7 @@ class SinglePoint(Configure):
 
 		#print(self.data)
 		self.out = pd.DataFrame.from_dict(self.data, orient='index')
-		if len(self.atoms) < 100:
+		if len(self.atoms) <= 100:
 			print(self.out.to_string())
 		else:
 			self.error_msg(
