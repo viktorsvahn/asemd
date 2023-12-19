@@ -65,7 +65,6 @@ modes = {
 mode_input = {key.lower():val for key, val in mode_input.items()}
 
 
-
 def main():
 	# INITIALISE SHARED VARIABLES #############################################
 	# CLI arguments have priority over the input file as a rule
@@ -297,10 +296,11 @@ def main():
 		except:
 			pass		
 
-	# Stack input variables in a dataframe
-	mode_param_df = pd.DataFrame.from_dict(mode_input, orient='index', columns=[''])	
-	global_param_df = pd.DataFrame.from_dict(global_input, orient='index', columns=[''])
-	param_df = pd.concat([global_param_df, mode_param_df])
+	#print(mode_input)
+	#print(global_input)
+	# Merge input dictionaries into a single one and generate a dataframe
+	inputs = {**global_input, **mode_input}
+	param_df = pd.DataFrame.from_dict(inputs, orient='index', columns=[''])
 
 
 	if (mode == 'NPT') and (PFACTOR == None):

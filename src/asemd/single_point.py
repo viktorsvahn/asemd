@@ -37,7 +37,6 @@ class SinglePoint(Configure):
 			'momenta':'get_momenta',
 			'velocities':'get_velocities'
 		}
-		print(self.output_structure)
 
 	def run(self):
 		"""Runs the single point evaluation of the properties that have been

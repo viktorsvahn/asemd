@@ -40,13 +40,10 @@ class Configure(object):
 		# Raise error if no calcualtor has been specified
 		if 'calculator' in self.mode_params:
 			self.calculator = self.mode_params['calculator']
-			try:
-				self.global_params.pop('calculator')
-			except:
-				pass
 		elif 'calculator' in self.global_params:
 			self.calculator = self.global_params['calculator']
 		else:
+			# This is used to produce an error
 			self.calculator = False
 
 		# Collect geometry variables and indices
@@ -102,12 +99,11 @@ class Configure(object):
 					'CRITICAL ERROR',
 					'Missing calculator!',
 					'Select EMT (for testing) or specify a python script that contains all calculator\ndefinitions by including:',
-					'MODE:\n  calculator: EMT/name_of_script',
+					'Global/MODE:\n  calculator: EMT/name_of_script',
 					'in the YAML input file.'
 				)
 				sys.exit()
 
-		print(self.atoms)
 
 		# If previous output exist, create new files datetime handle
 		if self.output_structure and (
@@ -183,7 +179,7 @@ class Configure(object):
 		self.handle_test = {(self.structure_handle in handle) for handle in info}
 		
 
-	def acquire_calc(self, arg=None):
+	def acquire_calc(self, filename='EMT'):
 		"""Method that acquires a chose calculator. If no argument is passed,
 		the method will arbitrarily choose the EMT calculator used for testing 
 		purposes. 
@@ -191,10 +187,10 @@ class Configure(object):
 		The calculator used for actual simulations should be defined
 		in a separate python script. To choose such a calculator, this method
 		should be passed with the name of the script as an argument."""
-		if arg == (None or 'EMT'):
+		if filename == (None or 'EMT'):
 			calculator = EMT()
 		else:
-			calculator = __import__(arg).calculator
+			calculator = __import__(filename).calculator
 		return calculator
 
 	def load_structure(self, filename):
