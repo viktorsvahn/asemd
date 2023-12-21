@@ -45,6 +45,7 @@ class EnergyMinimisation(Configure):
 		self.log_file = log_file
 
 
+
 		# NOT IMPLEMENTED
 		FRAC = 0.15
 		self.LAST_STEPS = math.ceil(self.STEPS*FRAC)
@@ -78,9 +79,9 @@ class EnergyMinimisation(Configure):
 		# Prints warning if not present
 		if (self.structure_handle is False) and (False in self.handle_test):
 			self.error_msg(
-					'Warning:',
-					'Could not find the structure handle within in the metadata.',
-					'This information may not appear in the stdout'
+				'Warning:',
+				'Could not find the structure handle within in the metadata.',
+				'This information may not appear in the stdout'
 			)
 
 		for i, a in enumerate(self.atoms):
@@ -174,7 +175,7 @@ class EnergyMinimisation(Configure):
 
 			eout = f'potential energy: {energy:.4f}'
 			fout = f'max force: {max(forces):.4f}'
-			print(f'Step: {self.STEPS}', eout, fout)
+			print(f'Last out:\n{eout} {fout}')
 
 			
 			if len(self.atoms) > 1:
@@ -183,10 +184,7 @@ class EnergyMinimisation(Configure):
 
 			self.save_structure(a)	
 
-		
-		#
-		#print(help(
-		#	self.dyn))
+
 
 
 	def print_status(self, atoms=None):
