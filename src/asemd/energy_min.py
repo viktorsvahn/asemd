@@ -118,10 +118,13 @@ class EnergyMinimisation(Configure):
 			#	print('FFODSHOSDFHSDFOHFGSDFOHNSDFS')
 			#	self.save_traj(a)
 			
-			self.structure_info(a)
+			#self.structure_info(a)
 			#self.dyn.attach(self.print_energy, interval=self.DUMP_INTERVAL)
-
-
+			if self.output_structure:
+				with open(self.log_file, 'a') as f:
+					if i != 0:
+						print('', file=f)
+					print(f'Structure: {i+1} (of {len(self.atoms)})', file=f)
 
 
 			# Run the minimisation
@@ -176,22 +179,19 @@ class EnergyMinimisation(Configure):
 			eout = f'potential energy: {energy:.4f}'
 			fout = f'max force: {max(forces):.4f}'
 			print(f'Last out:\n{eout} {fout}')
-
 			
 			if len(self.atoms) > 1:
 				end = datetime.datetime.now()
-				print(f'Structure {i+1} of ({len(self.atoms)}) completed after {end-start}\n')
+				#print(f'Potential energy: {energy:.4f} eV')
+				print(f'Completed after {end-start}\n')
 
-			self.save_structure(a)	
+				if self.output_structure:
+					with open(self.log_file, 'a') as f:
+						print(f'Completed after {end-start}\n', file=f)
 
+			if i % self.DUMP_INTERVAL == 0:
+				self.save_structure(a)
 
-
-
-	def print_status(self, atoms=None):
-		"""FGADASDASFGAFASDSA"""
-		if atoms is None:
-			atoms = self.atoms
-		pass
 
 	def save_structure(self, a):
 		"""If an output filename has been given, the the output is saved to a
