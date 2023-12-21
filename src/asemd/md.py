@@ -57,67 +57,24 @@ class MolecularDynamics(Configure):
 		self.external_stress = external_stress
 		self.log_file = log_file	
 
-		
+		# This is used together with self.print_energy_wrapper and allows us to 
+		# attach self.print_energy to the dynamic object inside a loop.
+		self.atoms_handle = 0
+
+		# Stores a set of dynamic objects for each atoms object.
+		self.dyns = []
 
 
-	# Auxillary methods
-	def save_traj(self):
-		"""Method that generates a trajectory object."""
-		# Generate a trajectory object and attaches it to the dynamic object
-		if self.output_structure:
-			self.traj = Trajectory(self.output_structure, 'w', self.atoms)
-			self.dyn.attach(self.traj.write, interval=self.DUMP_INTERVAL)
-
-	def save_log(self):
-		"""Logging capabilities for simulations."""
-		# Generate log object and attach it to dynamic object
-		logger = MDLogger(
-			self.dyn,
-			self.atoms,
-			logfile=self.log_file
-		)
-		self.dyn.attach(
-			logger
-		)
-		
 	def run(self):
 		"""Runs a molecular dynamics simulation under a chosen ensemble."""
-		# Set initial velocities based on temperature
-		for i, a in enumerate(self.atoms):
-			if len(self.atoms) > 1:
-				start = datetime.datetime.now()
-			print(f'Running structure: {i+1} (of {len(self.atoms)})')
+		for i, d in enumerate(self.dyns):
+			# Handles are used to 		
+			self.dyns_handle = d
+			self.atoms_handle = self.atoms[i]
 
-			MaxwellBoltzmannDistribution(a, temperature_K=self.TEMPERATURE)
-
-			# Add output generator to dynamic object for info during run
-			self.dyn.attach(self.print_energy, interval=self.DUMP_INTERVAL)
-
-
-			# Running
-			self.dyn.run(steps=self.STEPS)
-
-			# Stack attribute evaluations with potential energy
-			#energy = a.get_potential_energy()
-			#ut[self.output_map['energy']] = energy
-			#self.data[i] = out
-
-			if len(self.atoms) > 1:
-				end = datetime.datetime.now()
-				print(f'Potential energy: {energy:.4f} eV')
-				print(f'Completed after {end-start}\n')
-
-		# Logging
-		self.save_traj()
-		self.save_log()
-
-	# Ensemble methods
-	def nve(self):
-		"""Sets up a dynamic object for a microcanonical ensemble simulation."""
-		for i, a in enumerate(self.atoms):
-			del a.calc
+			del self.atoms_handle.calc
 			try:
-				a.calc = self.acquire_calc(self.calculator)
+				self.atoms_handle.calc = self.acquire_calc(self.calculator)
 			except:
 				self.error_msg(
 					'CRITICAL ERROR',
@@ -127,62 +84,91 @@ class MolecularDynamics(Configure):
 					'in the YAML input file.'
 				)
 				sys.exit()
+			
+			# Set initial velocities based on temperature
+			MaxwellBoltzmannDistribution(self.atoms_handle, temperature_K=self.TEMPERATURE)
+			
+			if len(self.atoms) > 1:
+				start = datetime.datetime.now()
+			print(f'Running structure: {i+1} (of {len(self.atoms)})')
 
+			# Add output generator to dynamic object for info during run
+			d.attach(self.print_energy_wrapper, interval=self.DUMP_INTERVAL)
+			
+			# Logging and trajectory saving
+			if self.output_structure:
+				traj_name = f'{i}_'+self.output_structure
+				self.traj = Trajectory(traj_name, 'w', self.atoms[i])
+				d.attach(self.traj.write, interval=self.DUMP_INTERVAL)
+				
+				# Logging
+				logger = MDLogger(
+					d,
+					self.atoms[i],
+					peratom=False,
+					logfile=self.log_file,
+					mode='a'
+				)
+				d.attach(
+					logger,
+				)
+				
+				with open(self.log_file, 'a') as f:
+					if i != 0:
+						print('', file=f)
+					print(f'Structure: {i+1} (of {len(self.atoms)})', file=f)
+
+
+			# Running
+			d.run(steps=self.STEPS)
+
+
+			if len(self.atoms) > 1:
+				end = datetime.datetime.now()
+				#print(f'Potential energy: {energy:.4f} eV')
+				print(f'Completed after {end-start}\n')
+				with open(self.log_file, 'a') as f:
+					print(f'Completed after {end-start}\n', file=f)
+
+
+	# Ensemble initialisation methods
+	def nve(self):
+		"""Sets up a dynamic object for a microcanonical ensemble simulation."""
+		for i, a in enumerate(self.atoms):
 			# Initiate dynamic object
-			self.dyn = VelocityVerlet(
+			dyn = VelocityVerlet(
 				a,
 				timestep=self.TIME_STEP*units.fs
 			)
+			
+			self.dyns.append(dyn)
 
 	def nvt(self):
 		"""Sets up a dynamic object for a canonical ensemble simulation using
 		a Langevin thermostat."""
 		for i, a in enumerate(self.atoms):
-			del a.calc
-			try:
-				a.calc = self.acquire_calc(self.calculator)
-			except:
-				self.error_msg(
-					'CRITICAL ERROR',
-					'Missing calculator!',
-					'Select EMT (for testing) or specify a python script that contains all calculator\ndefinitions by including:',
-					'Global/MODE:\n  calculator: EMT/name_of_script',
-					'in the YAML input file.'
-				)
-				sys.exit()
-
 			# Initiate dynamic object
-			self.dyn = Langevin(
+			dyn = Langevin(
 				a,
 				timestep=self.TIME_STEP*units.fs,
 				temperature_K=self.TEMPERATURE,
 				friction=self.FRICTION
 			)
 
+			self.dyns.append(dyn)
+
+
 	def npt(self):
 		"""Sets up a dynamic object for an isobaric ensemble simulation using 
 		a Nosé-Hoover thermostat and a Parrinello-Rahman barostat."""
 		for i, a in enumerate(self.atoms):
-			del a.calc
-			try:
-				a.calc = self.acquire_calc(self.calculator)
-			except:
-				self.error_msg(
-					'CRITICAL ERROR',
-					'Missing calculator!',
-					'Select EMT (for testing) or specify a python script that contains all calculator\ndefinitions by including:',
-					'Global/MODE:\n  calculator: EMT/name_of_script',
-					'in the YAML input file.'
-				)
-				sys.exit()
-
 			print(self.PFACTOR, type(self.PFACTOR))
 			if self.PFACTOR is not None:
 				self.PFACTOR = float(self.PFACTOR)
 			else:
 				pass
 
-			self.dyn = NPT(
+			dyn = NPT(
 				a,
 				timestep=self.TIME_STEP*units.fs,
 				temperature_K=self.TEMPERATURE,
@@ -190,3 +176,52 @@ class MolecularDynamics(Configure):
 				ttime=self.CHARACTERSISTIC_TIMESCALE*units.fs,
 				externalstress = self.external_stress*units.bar
 			)
+
+			self.dyns.append(dyn)
+
+	# Auxillary methods
+	def print_energy_wrapper(self):
+		"""Wrapper function that allows self.print_energy to be attached to 
+		dynamic objects within a loop."""
+		return self.print_energy(self.atoms_handle)
+	
+
+	#def save_traj(self, dyn=None):
+	#	"""Method that generates a trajectory object."""
+	#	# Generate a trajectory object and attaches it to the dynamic object
+	#
+	#	if dyn is None:
+	#		dyn = self.dyns
+	#
+	#	if self.output_structure:
+	#		self.traj = Trajectory(self.output_structure, 'w', self.atoms)
+	#		self.dyn.attach(self.traj.write, interval=self.DUMP_INTERVAL)
+	
+	#def save_log(self, dyn=None):
+	#	"""Logging capabilities for simulations."""
+	#	# Generate log object and attach it to dynamic object
+	#	if dyn is None:
+	#		dyn = self.dyns
+	#
+	#	logger = MDLogger(
+	#		dyn,
+	#		self.atoms_handle,
+	#		peratom=False,
+	#		logfile=self.log_file,
+	#		mode='a'
+	#	)
+	#	dyn.attach(
+	#		logger,
+	#		peratom=False
+	#	)
+	
+
+	#def save_traj_wrapper(self):
+	#	"""Wrapper function that allows self.save_log to be attached to 
+	#	dynamic objects within a loop."""
+	#	return self.save_traj(self.dyns_handle)
+	
+	#def save_log_wrapper(self):
+	#	"""Wrapper function that allows self.save_log to be attached to 
+	#	dynamic objects within a loop."""
+	#	return self.save_log(self.dyns_handle)

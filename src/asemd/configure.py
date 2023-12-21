@@ -27,6 +27,7 @@ class Configure(object):
 		self.input_structure = input_structure
 		self.output_structure = output_structure	
 
+		self.print_energy_gate = False
 
 		# Switch that allows one to force new output files to overwrite old ones
 		# with identical names
@@ -84,6 +85,7 @@ class Configure(object):
 				cell=a.get_cell(),
 				pbc=a.get_pbc()
 		) for a in atoms]
+
 		#if 'box size' in self.global_params:
 		#	if 'periodic' in self.global_params:
 		#		self.atoms = [Atoms(a.symbols, a.get_positions(), cell=self.size, pbc=True) for a in atoms]
@@ -97,7 +99,6 @@ class Configure(object):
 
 
 		for a in self.atoms:
-
 			# Terminate if no cell size in input
 			try:
 				a.set_cell(self.size)
@@ -105,9 +106,10 @@ class Configure(object):
 				# Would be neat to include structure-wise input parameters in
 				# the log/stdout next to each evaluation.
 				pass
+
 				#self.error_msg(
 				#	'CRITICAL ERROR',
-				#	'Input file contains no cell parameters!',
+				#	'Input file contains no cell parameters!',§
 				#	'Please set cell size (Å) manually by adding:',
 				#	'Global:\n  box size:  x y z',
 				#	'to the YAML input file.'
@@ -118,17 +120,17 @@ class Configure(object):
 			a.set_pbc(self.pbc)
 
 			# If first calculator cannot be assigned, raise error and terminate
-			try:
-				a.calc = self.acquire_calc(self.calculator)
-			except:
-				self.error_msg(
-					'CRITICAL ERROR',
-					'Missing calculator!',
-					'Select EMT (for testing) or specify a python script that contains all calculator\ndefinitions by including:',
-					'Global/MODE:\n  calculator: EMT/name_of_script',
-					'in the YAML input file.'
-				)
-				sys.exit()
+			#try:
+			#	a.calc = self.acquire_calc(self.calculator)
+			#except:
+			#	self.error_msg(
+			#		'CRITICAL ERROR',
+			#		'Missing calculator!',
+			#		'Select EMT (for testing) or specify a python script that contains all calculator\ndefinitions by including:',
+			#		'Global/MODE:\n  calculator: EMT/name_of_script',
+			#		'in the YAML input file.'
+			#	)
+			#	sys.exit()
 
 
 		# If previous output exist, create new files datetime handle
@@ -151,7 +153,7 @@ class Configure(object):
 				self.output_structure = new_filename
 				self.mode_params['output'] = self.output_structure
 
-		else:
+		else:	
 			pass
 
 
@@ -240,6 +242,7 @@ class Configure(object):
 		"""
 		if atoms is None:
 			atoms = self.atoms
+
 		epot = atoms.get_potential_energy()/len(atoms)
 		ekin = atoms.get_kinetic_energy()/len(atoms)
 		etot = epot + ekin
