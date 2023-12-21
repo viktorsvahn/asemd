@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
-
+import sys
+import datetime
 import numpy as np
 
 from ase.md.velocitydistribution import MaxwellBoltzmannDistribution
@@ -82,53 +83,110 @@ class MolecularDynamics(Configure):
 	def run(self):
 		"""Runs a molecular dynamics simulation under a chosen ensemble."""
 		# Set initial velocities based on temperature
-		MaxwellBoltzmannDistribution(self.atoms, temperature_K=self.TEMPERATURE)
+		for i, a in enumerate(self.atoms):
+			if len(self.atoms) > 1:
+				start = datetime.datetime.now()
+			print(f'Running structure: {i+1} (of {len(self.atoms)})')
 
-		# Add output generator to dynamic object for info during run
-		self.dyn.attach(self.print_energy, interval=self.DUMP_INTERVAL)
+			MaxwellBoltzmannDistribution(a, temperature_K=self.TEMPERATURE)
+
+			# Add output generator to dynamic object for info during run
+			self.dyn.attach(self.print_energy, interval=self.DUMP_INTERVAL)
+
+
+			# Running
+			self.dyn.run(steps=self.STEPS)
+
+			# Stack attribute evaluations with potential energy
+			#energy = a.get_potential_energy()
+			#ut[self.output_map['energy']] = energy
+			#self.data[i] = out
+
+			if len(self.atoms) > 1:
+				end = datetime.datetime.now()
+				print(f'Potential energy: {energy:.4f} eV')
+				print(f'Completed after {end-start}\n')
 
 		# Logging
 		self.save_traj()
 		self.save_log()
 
-		# Running
-		self.dyn.run(steps=self.STEPS)
-
-
 	# Ensemble methods
 	def nve(self):
 		"""Sets up a dynamic object for a microcanonical ensemble simulation."""
-		# Initiate dynamic object
-		self.dyn = VelocityVerlet(
-			self.atoms,
-			timestep=self.TIME_STEP*units.fs
-		)
+		for i, a in enumerate(self.atoms):
+			del a.calc
+			try:
+				a.calc = self.acquire_calc(self.calculator)
+			except:
+				self.error_msg(
+					'CRITICAL ERROR',
+					'Missing calculator!',
+					'Select EMT (for testing) or specify a python script that contains all calculator\ndefinitions by including:',
+					'Global/MODE:\n  calculator: EMT/name_of_script',
+					'in the YAML input file.'
+				)
+				sys.exit()
+
+			# Initiate dynamic object
+			self.dyn = VelocityVerlet(
+				a,
+				timestep=self.TIME_STEP*units.fs
+			)
 
 	def nvt(self):
 		"""Sets up a dynamic object for a canonical ensemble simulation using
 		a Langevin thermostat."""
-		# Initiate dynamic object
-		self.dyn = Langevin(
-			self.atoms,
-			timestep=self.TIME_STEP*units.fs,
-			temperature_K=self.TEMPERATURE,
-			friction=self.FRICTION
-		)
+		for i, a in enumerate(self.atoms):
+			del a.calc
+			try:
+				a.calc = self.acquire_calc(self.calculator)
+			except:
+				self.error_msg(
+					'CRITICAL ERROR',
+					'Missing calculator!',
+					'Select EMT (for testing) or specify a python script that contains all calculator\ndefinitions by including:',
+					'Global/MODE:\n  calculator: EMT/name_of_script',
+					'in the YAML input file.'
+				)
+				sys.exit()
+
+			# Initiate dynamic object
+			self.dyn = Langevin(
+				a,
+				timestep=self.TIME_STEP*units.fs,
+				temperature_K=self.TEMPERATURE,
+				friction=self.FRICTION
+			)
 
 	def npt(self):
 		"""Sets up a dynamic object for an isobaric ensemble simulation using 
 		a Nosé-Hoover thermostat and a Parrinello-Rahman barostat."""
-		print(self.PFACTOR, type(self.PFACTOR))
-		if self.PFACTOR is not None:
-			self.PFACTOR = float(self.PFACTOR)
-		else:
-			pass
+		for i, a in enumerate(self.atoms):
+			del a.calc
+			try:
+				a.calc = self.acquire_calc(self.calculator)
+			except:
+				self.error_msg(
+					'CRITICAL ERROR',
+					'Missing calculator!',
+					'Select EMT (for testing) or specify a python script that contains all calculator\ndefinitions by including:',
+					'Global/MODE:\n  calculator: EMT/name_of_script',
+					'in the YAML input file.'
+				)
+				sys.exit()
 
-		self.dyn = NPT(
-			self.atoms,
-			timestep=self.TIME_STEP*units.fs,
-			temperature_K=self.TEMPERATURE,
-			pfactor=self.PFACTOR*units.GPa*(units.fs**2),
-			ttime=self.CHARACTERSISTIC_TIMESCALE*units.fs,
-			externalstress = self.external_stress*units.bar
-		)
+			print(self.PFACTOR, type(self.PFACTOR))
+			if self.PFACTOR is not None:
+				self.PFACTOR = float(self.PFACTOR)
+			else:
+				pass
+
+			self.dyn = NPT(
+				a,
+				timestep=self.TIME_STEP*units.fs,
+				temperature_K=self.TEMPERATURE,
+				pfactor=self.PFACTOR*units.GPa*(units.fs**2),
+				ttime=self.CHARACTERSISTIC_TIMESCALE*units.fs,
+				externalstress = self.external_stress*units.bar
+			)

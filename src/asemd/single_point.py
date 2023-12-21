@@ -65,8 +65,21 @@ class SinglePoint(Configure):
 		- velocities"""
 		for i, a in enumerate(self.atoms):
 			out = {}
+			
 			del a.calc
-			a.calc = self.acquire_calc(self.calculator)
+			try:
+				a.calc = self.acquire_calc(self.calculator)
+			except:
+				self.error_msg(
+					'CRITICAL ERROR',
+					'Missing calculator!',
+					'Select EMT (for testing) or specify a python script that contains all calculator\ndefinitions by including:',
+					'Global/MODE:\n  calculator: EMT/name_of_script',
+					'in the YAML input file.'
+				)
+				sys.exit()
+			
+			#a.calc = self.acquire_calc(self.calculator)
 
 			# Prints timestamps and indices
 			if len(self.atoms) > 1:

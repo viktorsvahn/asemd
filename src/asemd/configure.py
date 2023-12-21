@@ -25,14 +25,13 @@ class Configure(object):
 		self.mode_params = mode_params
 		self.global_params = global_params
 		self.input_structure = input_structure
-		self.output_structure = output_structure
-		
+		self.output_structure = output_structure	
 
 
 		# Switch that allows one to force new output files to overwrite old ones
 		# with identical names
 		if 'overwrite' in self.global_params:
-			self.overwrite = True
+			self.overwrite = self.global_params['overwrite']
 		else:
 			self.overwrite = False
 			self.global_params['overwrite'] = self.overwrite
@@ -135,9 +134,9 @@ class Configure(object):
 		# If previous output exist, create new files datetime handle
 		if self.output_structure and (
 			os.path.exists(self.output_structure)):
+			
 			if self.overwrite:
 				os.remove(self.output_structure)
-
 			else:
 				# Adds datetime infor just before extension if filename is taken
 				ext = self.output_structure.split('.')[-1]
@@ -150,6 +149,8 @@ class Configure(object):
 					f'Created a new outfile called {new_filename}'
 				)
 				self.output_structure = new_filename
+				self.mode_params['output'] = self.output_structure
+
 		else:
 			pass
 
