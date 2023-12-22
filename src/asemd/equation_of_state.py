@@ -82,6 +82,7 @@ class EquationState(Configure):
 			print(self.out.to_string())
 		else:
 			self.error_msg(
+				'Warning',
 				'Too many structures to print tabulated summary of output.',
 				'Please refer to the log file stored under logs/.'
 			)

@@ -59,6 +59,7 @@ class Configure(object):
 		else:
 			self.size = False
 			self.error_msg(
+				'Warning',
 				'No geometry was set in the input.',
 				'Geometry from input file will be used, if any.'
 			)
