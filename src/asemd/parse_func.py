@@ -59,32 +59,33 @@ EOS:
 -----------------------------
 
 GLOBAL INPUT:
-input structure:\tSpecifies the starting structure.
-calculator:\t\tSpecifies the ASE calculator to be used. If using a custom 
+input structure:	Specifies the starting structure.
+calculator:		Specifies the ASE calculator to be used. If using a custom 
 			calculator, this should be the name of a python script that contain
 			the proper calculator definition.
-#starting index:\tSpecifies the index used in reading .traj-input structures. 
-#			Defaults to -1
-box size:\t\tWidth of the simulation box for x, y and z.
-periodic:\t\tBoolean for periodic boundary conditions.
-
-log path:\t\tPath to log file.
+box size:		Width of the simulation box for x, y and z.
+periodic:		Boolean for periodic boundary conditions.
+overwrite:		Boolean for wheter or not outputs should overwrite previous files
+			with the same name.
+log path:		Path to log file.
 
 MODE INPUT:
-optimiser:\t\tMinimisation optimiser. Choose between BFGS, GPMin or MDMin.
-output:\t\t\tName of output file with extention.
-temperature:\t\tSpecifies the temperature in Kelvin used in simulations.
-time step:\t\tWidth of the time step in fs.
-steps:\t\t\tNumber of simulation steps.
-dump interval:\t\tCoordinate dump interval for output.
-name:\t\t\tSpecifies the name of a particular run in the log file.
-friction:\t\tSets the friction constant for the Langevin thermostat (NVT).
-pfactor:\t\tThe pressure factor used for the parrinello-Rahman barostat (NPT).
-external stress:\tExternal stress tensor used in NPT ensembles.
-thermostat timescale:\tCharacteristic timescale of Nosé-Hoover thermostat (NPT).
-range:\t\t\tThe range used when fitting an eauation of state. Set start stop and
-\t\t\tnum-points.
-method:\t\t\tThe equation of state method. Default is Birch-Murnaghan.
+optimiser:		Minimisation optimiser. Choose between BFGS, GPMin or MDMin.
+output:			Name of output file with extention.
+temperature:		Specifies the temperature in Kelvin used in simulations.
+time step:		Width of the time step in fs.
+steps:			Number of simulation steps.
+dump interval:		Coordinate dump interval for output.
+structures:		Set structure indices (not zero indexed) that are to be evaluated,
+			e.g. 1 5 8-10.
+name:			Specifies the name of a particular run in the log file.
+friction:		Sets the friction constant for the Langevin thermostat (NVT).
+pfactor:		The pressure factor used for the parrinello-Rahman barostat (NPT).
+external stress:	External stress tensor used in NPT ensembles.
+thermostat timescale:	Characteristic timescale of Nosé-Hoover thermostat (NPT).
+range:			The range used when fitting an eauation of state. Set start stop and
+			num-points.
+method:			The equation of state method. Default is Birch-Murnaghan.
 '''
 	)
 	parser.add_argument(
