@@ -67,7 +67,8 @@ class SinglePoint(Configure):
 			if i+1 in self.structures:
 				out = {}
 				
-				del a.calc
+				if i < 0:
+					del self.atoms[i-1].calc
 				try:
 					a.calc = self.acquire_calc(self.calculator)
 				except:

@@ -88,7 +88,8 @@ class EnergyMinimisation(Configure):
 			if i+1 in self.structures:
 				self.printout = []
 
-				del a.calc
+				if i < 0:
+					del self.atoms[i-1].calcdel a.calc
 				try:
 					a.calc = self.acquire_calc(self.calculator)
 				except:

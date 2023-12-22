@@ -75,7 +75,8 @@ class MolecularDynamics(Configure):
 				self.dyns_handle = d
 				self.atoms_handle = self.atoms[i]
 
-				del self.atoms_handle.calc
+				if i < 0:
+					del self.atoms[i-1].calc
 				try:
 					self.atoms_handle.calc = self.acquire_calc(self.calculator)
 				except:

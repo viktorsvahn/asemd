@@ -52,7 +52,8 @@ class EquationState(Configure):
 		for i, a in enumerate(self.atoms):
 			if i+1 in self.structures:
 
-				del a.calc
+				if i < 0:
+					del self.atoms[i-1].calc
 				try:
 					a.calc = self.acquire_calc(self.calculator)
 				except:
