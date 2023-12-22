@@ -113,7 +113,7 @@ class SinglePoint(Configure):
 				# Stack attribute evaluations with potential energy
 				energy = a.get_potential_energy()
 				out[self.output_map['energy']] = energy
-				self.data[i] = out
+				self.data[i+1] = out
 
 				if len(self.atoms) > 1:
 					end = datetime.datetime.now()
@@ -122,7 +122,7 @@ class SinglePoint(Configure):
 
 		#print(self.data)
 		self.out = pd.DataFrame.from_dict(self.data, orient='index')
-		if len(self.atoms) <= 100:
+		if len(self.structures) <= 100:
 			print(self.out.to_string())
 		else:
 			self.error_msg(

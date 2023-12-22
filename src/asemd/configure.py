@@ -59,19 +59,10 @@ class Configure(object):
 		else:
 			self.size = False
 			self.error_msg(
-					'No geometry was set in the input.',
-					'Geometry from input file will be used, if any.'
+				'No geometry was set in the input.',
+				'Geometry from input file will be used, if any.'
 			)
 
-		if 'structures' in self.mode_params:
-			self.structures = self.mode_params['structures']
-			self.structures = self.acquire_index_range(self.structures)
-		else:
-			if 'traj' in self.input_structure:
-				self.structures = -1
-				self.mode_params['structures'] = self.structures
-			else:
-				self.structures = False
 
 
 		#if 'structure index' in self.mode_params:
@@ -108,41 +99,53 @@ class Configure(object):
 		#	else:
 		#		self.atoms = [Atoms(a.symbols, a.get_positions(), cell=a.get_cell(), pbc=False) for a in atoms]
 
+		if 'structures' in self.mode_params:
+			self.structures = mode_params['structures'].split(' ')
+			self.structures = self.acquire_index_range(self.structures)
+		else:
+			if 'traj' in self.input_structure:
+				self.structures = -1
+				self.STRUCTURE_INDEX = -1
+				self.mode_params['structures'] = self.structures
+			else:
+				self.structures = [_ for _ in range(len(self.atoms))]
+
 
 		for i, a in enumerate(self.atoms):
+			if i+1 in self.structures:
 
-			# Terminate if no cell size in input
-			try:
-				a.set_cell(self.size)
-			except:
-				# Would be neat to include structure-wise input parameters in
-				# the log/stdout next to each evaluation.
-				pass
+				# Terminate if no cell size in input
+				try:
+					a.set_cell(self.size)
+				except:
+					# Would be neat to include structure-wise input parameters in
+					# the log/stdout next to each evaluation.
+					pass
 
-				#self.error_msg(
-				#	'CRITICAL ERROR',
-				#	'Input file contains no cell parameters!',§
-				#	'Please set cell size (Å) manually by adding:',
-				#	'Global:\n  box size:  x y z',
-				#	'to the YAML input file.'
-				#)
-				#sys.exit()
-			
-			# Assing PBC status
-			a.set_pbc(self.pbc)
+					#self.error_msg(
+					#	'CRITICAL ERROR',
+					#	'Input file contains no cell parameters!',§
+					#	'Please set cell size (Å) manually by adding:',
+					#	'Global:\n  box size:  x y z',
+					#	'to the YAML input file.'
+					#)
+					#sys.exit()
+				
+				# Assing PBC status
+				a.set_pbc(self.pbc)
 
-			# If first calculator cannot be assigned, raise error and terminate
-			#try:
-			#	a.calc = self.acquire_calc(self.calculator)
-			#except:
-			#	self.error_msg(
-			#		'CRITICAL ERROR',
-			#		'Missing calculator!',
-			#		'Select EMT (for testing) or specify a python script that contains all calculator\ndefinitions by including:',
-			#		'Global/MODE:\n  calculator: EMT/name_of_script',
-			#		'in the YAML input file.'
-			#	)
-			#	sys.exit()
+				# If first calculator cannot be assigned, raise error and terminate
+				#try:
+				#	a.calc = self.acquire_calc(self.calculator)
+				#except:
+				#	self.error_msg(
+				#		'CRITICAL ERROR',
+				#		'Missing calculator!',
+				#		'Select EMT (for testing) or specify a python script that contains all calculator\ndefinitions by including:',
+				#		'Global/MODE:\n  calculator: EMT/name_of_script',
+				#		'in the YAML input file.'
+				#	)
+				#	sys.exit()
 
 
 		# If previous output exist, create new files datetime handle
@@ -210,6 +213,10 @@ class Configure(object):
 				raise TypeError('Input structure might be a .traj-file. Change the input extention to .traj and try again.')
 		"""
 
+		#######################################################################
+		# Thea idea was to have tha ability to print tags/names in the output
+		# This might be redundant if indices are included in logs/stdout
+		#######################################################################
 		if 'structure handle' in self.mode_params:
 			self.structure_handle = self.mode_params['structure handle']
 		else:
@@ -219,7 +226,9 @@ class Configure(object):
 		# Used for printing warnings		
 		info = [a.info.keys() for a in self.atoms]
 		self.handle_test = {(self.structure_handle in handle) for handle in info}
-		
+		#######################################################################
+
+
 
 	def acquire_calc(self, filename='EMT'):
 		"""Method that acquires a chose calculator. If no argument is passed,
@@ -239,7 +248,7 @@ class Configure(object):
 		"""Reads input files and stores them in an iterable list."""
 		if 'traj' in self.input_structure:
 			#structure_list = [Trajectory(filename)[self.structure_indices]]
-			structure_list = [Trajectory(filename)]
+			structure_list = [Trajectory(filename)][self.STRUCTURE_INDEX]
 		else:
 			#if self.structure_indices:
 			#	structure_list = [read(filename, ':')[self.structure_indices]]
@@ -315,8 +324,8 @@ class Configure(object):
 				if len(x)<2:
 					pass
 				else:
-					subrange = [i+1 for i in range(x[0], x[1]+1)]
+					subrange = [i for i in range(x[0], x[1]+1)]
 				tmp += subrange
 			else:
-				tmp.append(x+1)
+				tmp.append(x)
 		return tmp

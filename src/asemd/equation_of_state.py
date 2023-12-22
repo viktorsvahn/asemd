@@ -69,7 +69,7 @@ class EquationState(Configure):
 					start = datetime.datetime.now()
 				
 				self.size_variation(i, a)
-				self.data[i] = self.run_eos(i, a)
+				self.data[i+1] = self.run_eos(i, a)
 
 				if len(self.atoms) > 1:
 					end = datetime.datetime.now()
@@ -78,7 +78,7 @@ class EquationState(Configure):
 		self.out = pd.DataFrame.from_dict(self.data, orient='index', columns=['V0 [Å^3]', 'E0 [eV]', 'B [GPa]'])
 		self.out.reindex(self.structures)
 		
-		if len(self.atoms) <= 100:
+		if len(self.structures) <= 100:
 			print(self.out.to_string())
 		else:
 			self.error_msg(

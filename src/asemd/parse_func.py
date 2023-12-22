@@ -28,15 +28,34 @@ by ':'.
 
 ----------Example------------
 Global:
-  input structure: input.pdb
+  input file: input.xyz
+  calculator: some_definition_script
   box size: 10 10 10
+  periodic: True
+  overwrite: False
+  log path: logs/
+
+EMIN:
+  name: test_name
+  optimiser: BFGS
+  fmax: 0.05
+  steps: 100
+  output: relaxed.xyz
 
 NVT:
+  name: test_name
   temperature: 300
   friction: 0.01
   time step: 2
-  calculator: EMT
-  steps: 10
+  steps: 100
+  dump interval: 2
+  output: nvt_300K.traj
+
+EOS:
+  name: test
+  range: 0.95 1.05 10
+  method: Birch-Murnaghan
+  output: eos.traj
 -----------------------------
 
 GLOBAL INPUT:
