@@ -85,6 +85,8 @@ class EnergyMinimisation(Configure):
 			)
 
 		for i, a in enumerate(self.atoms):
+			# Removing this might cause slurm to not produce any output
+			print('', flush=True)
 			if i in self.structures:
 				self.printout = []
 

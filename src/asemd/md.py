@@ -68,6 +68,8 @@ class MolecularDynamics(Configure):
 	def run(self):
 		"""Runs a molecular dynamics simulation under a chosen ensemble."""
 		for i, d in enumerate(self.dyns):
+			# Removing this might cause slurm to not produce any output
+			print('', flush=True)
 			if i in self.structures:
 
 

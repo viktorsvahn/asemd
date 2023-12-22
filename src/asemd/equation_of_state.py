@@ -50,6 +50,8 @@ class EquationState(Configure):
 	def run(self):
 		"""Evaluates an equation of state on the given set of structures."""
 		for i, a in enumerate(self.atoms):
+			# Removing this might cause slurm to not produce any output
+			print('', flush=True)
 			if i in self.structures:
 
 				try:
