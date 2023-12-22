@@ -111,6 +111,13 @@ class Configure(object):
 			else:
 				self.structures = [_ for _ in range(len(self.atoms))]
 
+		#self.structures = self.mode_params['structures']
+		
+		if 'traj' in self.input_structure:
+			self.structures = -1
+			self.STRUCTURE_INDEX = -1
+			self.mode_params['structures'] = self.structures
+
 
 		for i, a in enumerate(self.atoms):
 			if i+1 in self.structures:
