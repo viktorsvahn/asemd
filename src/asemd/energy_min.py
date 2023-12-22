@@ -88,8 +88,6 @@ class EnergyMinimisation(Configure):
 			if i+1 in self.structures:
 				self.printout = []
 
-				if i < 0:
-					del self.atoms[i-1].calcdel a.calc
 				try:
 					a.calc = self.acquire_calc(self.calculator)
 				except:
@@ -192,6 +190,8 @@ class EnergyMinimisation(Configure):
 
 			if i % self.DUMP_INTERVAL == 0:
 				self.save_structure(a)
+
+			del a.calc
 
 
 	def save_structure(self, a):

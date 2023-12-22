@@ -52,8 +52,6 @@ class EquationState(Configure):
 		for i, a in enumerate(self.atoms):
 			if i+1 in self.structures:
 
-				if i < 0:
-					del self.atoms[i-1].calc
 				try:
 					a.calc = self.acquire_calc(self.calculator)
 				except:
@@ -75,6 +73,8 @@ class EquationState(Configure):
 				if len(self.atoms) > 1:
 					end = datetime.datetime.now()
 					print(f'Structure {i+1} of ({len(self.atoms)}) completed after {end-start}\n')
+
+			del a.calc
 		
 		self.out = pd.DataFrame.from_dict(self.data, orient='index', columns=['V0 [Å^3]', 'E0 [eV]', 'B [GPa]'])
 		self.out.reindex(self.structures)
@@ -97,6 +97,7 @@ class EquationState(Configure):
 				os.remove(self.traj_name)
 			except:
 				pass
+
 
 
 	def size_variation(self, index, atoms):

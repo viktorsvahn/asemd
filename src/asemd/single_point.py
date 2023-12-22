@@ -67,8 +67,6 @@ class SinglePoint(Configure):
 			if i+1 in self.structures:
 				out = {}
 				
-				if i < 0:
-					del self.atoms[i-1].calc
 				try:
 					a.calc = self.acquire_calc(self.calculator)
 				except:
@@ -120,6 +118,8 @@ class SinglePoint(Configure):
 					end = datetime.datetime.now()
 					print(f'Potential energy: {energy:.4f} eV')
 					print(f'Structure {i+1} of ({len(self.atoms)}) completed after {end-start}\n')
+			
+			del a.calc
 
 		#print(self.data)
 		self.out = pd.DataFrame.from_dict(self.data, orient='index')

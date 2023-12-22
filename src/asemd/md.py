@@ -75,8 +75,6 @@ class MolecularDynamics(Configure):
 				self.dyns_handle = d
 				self.atoms_handle = self.atoms[i]
 
-				if i < 0:
-					del self.atoms[i-1].calc
 				try:
 					self.atoms_handle.calc = self.acquire_calc(self.calculator)
 				except:
@@ -135,6 +133,7 @@ class MolecularDynamics(Configure):
 					if self.log_file:
 						with open(self.log_file, 'a') as f:
 							print(f'Completed after {end-start}\n', file=f)
+			del a.calc
 
 
 	# Ensemble initialisation methods
