@@ -68,7 +68,7 @@ class MolecularDynamics(Configure):
 	def run(self):
 		"""Runs a molecular dynamics simulation under a chosen ensemble."""
 		for i, d in enumerate(self.dyns):
-			if i+1 in self.structures:
+			if i in self.structures:
 
 
 				# Handles are used to 		

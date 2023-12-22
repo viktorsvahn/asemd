@@ -64,7 +64,6 @@ class SinglePoint(Configure):
 		- stress
 		- velocities"""
 		for i, a in enumerate(self.atoms):
-			print(self.structures)
 			if i in self.structures:
 				out = {}
 				

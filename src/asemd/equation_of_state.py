@@ -50,7 +50,7 @@ class EquationState(Configure):
 	def run(self):
 		"""Evaluates an equation of state on the given set of structures."""
 		for i, a in enumerate(self.atoms):
-			if i+1 in self.structures:
+			if i in self.structures:
 
 				try:
 					a.calc = self.acquire_calc(self.calculator)

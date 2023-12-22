@@ -85,7 +85,7 @@ class EnergyMinimisation(Configure):
 			)
 
 		for i, a in enumerate(self.atoms):
-			if i+1 in self.structures:
+			if i in self.structures:
 				self.printout = []
 
 				try:
