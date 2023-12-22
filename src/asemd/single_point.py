@@ -64,60 +64,61 @@ class SinglePoint(Configure):
 		- stress
 		- velocities"""
 		for i, a in enumerate(self.atoms):
-			out = {}
-			
-			del a.calc
-			try:
-				a.calc = self.acquire_calc(self.calculator)
-			except:
-				self.error_msg(
-					'CRITICAL ERROR',
-					'Missing calculator!',
-					'Select EMT (for testing) or specify a python script that contains all calculator\ndefinitions by including:',
-					'Global/MODE:\n  calculator: EMT/name_of_script',
-					'in the YAML input file.'
-				)
-				sys.exit()
-			
-			#a.calc = self.acquire_calc(self.calculator)
+			if i+1 in self.structures:
+				out = {}
+				
+				del a.calc
+				try:
+					a.calc = self.acquire_calc(self.calculator)
+				except:
+					self.error_msg(
+						'CRITICAL ERROR',
+						'Missing calculator!',
+						'Select EMT (for testing) or specify a python script that contains all calculator\ndefinitions by including:',
+						'Global/MODE:\n  calculator: EMT/name_of_script',
+						'in the YAML input file.'
+					)
+					sys.exit()
+				
+				#a.calc = self.acquire_calc(self.calculator)
 
-			# Prints timestamps and indices
-			if len(self.atoms) > 1:
-				start = datetime.datetime.now()
-			print(f'Running structure: {i+1} (of {len(self.atoms)})')
+				# Prints timestamps and indices
+				if len(self.atoms) > 1:
+					start = datetime.datetime.now()
+				#print(f'Running structure: {i+1} (of {len(self.atoms)})')
 
-			# Checks to see if properties have been assigned correctly in the input
-			if ('evaluate' in self.mode_params) and (
-				self.mode_params['evaluate'] is not None):
-				self.evaluate = set(self.mode_params['evaluate'])
+				# Checks to see if properties have been assigned correctly in the input
+				if ('evaluate' in self.mode_params) and (
+					self.mode_params['evaluate'] is not None):
+					self.evaluate = set(self.mode_params['evaluate'])
 
-				# Runs evaluation on all attributes
-				for attribute in self.evaluate:
-					print(f'Evaluating: {attribute}')
+					# Runs evaluation on all attributes
+					for attribute in self.evaluate:
+						print(f'Evaluating: {attribute}')
 
-					# Evaluate property
-					prop = self.acquire_property(attribute, a)			
-					
-					# Evaluates maximum attribute qty
-					# If attribute is a vector-qty, evaluate max norm
-					if attribute is ('forces' or 'velocities' or 'momenta'):
-						propx, propy, propz = prop[:,0], prop[:,1], prop[:,2]
-						prop_vectors = (propx**2 + propy**2 + propz**2)**0.5
-						out[self.output_map[attribute]] = np.max(prop_vectors)
-					else:
-						out[self.output_map[attribute]] = np.max(prop)
-			else:
-				pass
+						# Evaluate property
+						prop = self.acquire_property(attribute, a)			
+						
+						# Evaluates maximum attribute qty
+						# If attribute is a vector-qty, evaluate max norm
+						if attribute is ('forces' or 'velocities' or 'momenta'):
+							propx, propy, propz = prop[:,0], prop[:,1], prop[:,2]
+							prop_vectors = (propx**2 + propy**2 + propz**2)**0.5
+							out[self.output_map[attribute]] = np.max(prop_vectors)
+						else:
+							out[self.output_map[attribute]] = np.max(prop)
+				else:
+					pass
 
-			# Stack attribute evaluations with potential energy
-			energy = a.get_potential_energy()
-			out[self.output_map['energy']] = energy
-			self.data[i] = out
+				# Stack attribute evaluations with potential energy
+				energy = a.get_potential_energy()
+				out[self.output_map['energy']] = energy
+				self.data[i] = out
 
-			if len(self.atoms) > 1:
-				end = datetime.datetime.now()
-				print(f'Potential energy: {energy:.4f} eV')
-				print(f'Completed after {end-start}\n')
+				if len(self.atoms) > 1:
+					end = datetime.datetime.now()
+					print(f'Potential energy: {energy:.4f} eV')
+					print(f'Structure {i+1} of ({len(self.atoms)}) completed after {end-start}\n')
 
 		#print(self.data)
 		self.out = pd.DataFrame.from_dict(self.data, orient='index')
@@ -133,7 +134,7 @@ class SinglePoint(Configure):
 			with open(self.log_file, 'a') as f:
 				print(self.out.to_string(), file=f)
 
-		self.save_structure(None)
+		self.save_structure(a)
 
 
 	def acquire_property(self, attribute, atoms):

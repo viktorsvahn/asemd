@@ -68,67 +68,72 @@ class MolecularDynamics(Configure):
 	def run(self):
 		"""Runs a molecular dynamics simulation under a chosen ensemble."""
 		for i, d in enumerate(self.dyns):
-			# Handles are used to 		
-			self.dyns_handle = d
-			self.atoms_handle = self.atoms[i]
+			if i+1 in self.structures:
 
-			del self.atoms_handle.calc
-			try:
-				self.atoms_handle.calc = self.acquire_calc(self.calculator)
-			except:
-				self.error_msg(
-					'CRITICAL ERROR',
-					'Missing calculator!',
-					'Select EMT (for testing) or specify a python script that contains all calculator\ndefinitions by including:',
-					'Global/MODE:\n  calculator: EMT/name_of_script',
-					'in the YAML input file.'
-				)
-				sys.exit()
-			
-			# Set initial velocities based on temperature
-			MaxwellBoltzmannDistribution(self.atoms_handle, temperature_K=self.TEMPERATURE)
-			
-			if len(self.atoms) > 1:
-				start = datetime.datetime.now()
-			print(f'Running structure: {i+1} (of {len(self.atoms)})')
 
-			# Add output generator to dynamic object for info during run
-			d.attach(self.print_energy_wrapper, interval=self.DUMP_INTERVAL)
-			
-			# Logging and trajectory saving
-			if self.output_structure:
-				traj_name = f'{i}_'+self.output_structure
-				self.traj = Trajectory(traj_name, 'w', self.atoms[i])
-				d.attach(self.traj.write, interval=self.DUMP_INTERVAL)
+				# Handles are used to 		
+				self.dyns_handle = d
+				self.atoms_handle = self.atoms[i]
+
+				del self.atoms_handle.calc
+				try:
+					self.atoms_handle.calc = self.acquire_calc(self.calculator)
+				except:
+					self.error_msg(
+						'CRITICAL ERROR',
+						'Missing calculator!',
+						'Select EMT (for testing) or specify a python script that contains all calculator\ndefinitions by including:',
+						'Global/MODE:\n  calculator: EMT/name_of_script',
+						'in the YAML input file.'
+					)
+					sys.exit()
 				
-				# Logging
-				logger = MDLogger(
-					d,
-					self.atoms[i],
-					peratom=False,
-					logfile=self.log_file,
-					mode='a'
-				)
-				d.attach(
-					logger,
-				)
+				# Set initial velocities based on temperature
+				MaxwellBoltzmannDistribution(self.atoms_handle, temperature_K=self.TEMPERATURE)
 				
-				with open(self.log_file, 'a') as f:
-					if i != 0:
-						print('', file=f)
-					print(f'Structure: {i+1} (of {len(self.atoms)})', file=f)
+				if len(self.atoms) > 1:
+					start = datetime.datetime.now()
+				print(f'Running structure: {i+1} (of {len(self.atoms)})')
+
+				# Add output generator to dynamic object for info during run
+				d.attach(self.print_energy_wrapper, interval=self.DUMP_INTERVAL)
+				
+				# Logging and trajectory saving
+				if self.output_structure:
+					traj_name = f'{i}_'+self.output_structure
+					self.traj = Trajectory(traj_name, 'w', self.atoms[i])
+					d.attach(self.traj.write, interval=self.DUMP_INTERVAL)
+					
+					# Logging
+					logger = MDLogger(
+						d,
+						self.atoms[i],
+						peratom=False,
+						logfile=self.log_file,
+						mode='a'
+					)
+					d.attach(
+						logger,
+					)
+					
+					with open(self.log_file, 'a') as f:
+						if i != 0:
+							print('', file=f)
+						print(f'Structure: {i+1} (of {len(self.atoms)})', file=f)
 
 
-			# Running
-			d.run(steps=self.STEPS)
+				# Running
+				d.run(steps=self.STEPS)
 
 
-			if len(self.atoms) > 1:
-				end = datetime.datetime.now()
-				#print(f'Potential energy: {energy:.4f} eV')
-				print(f'Completed after {end-start}\n')
-				with open(self.log_file, 'a') as f:
-					print(f'Completed after {end-start}\n', file=f)
+				if len(self.atoms) > 1:
+					end = datetime.datetime.now()
+					#print(f'Potential energy: {energy:.4f} eV')
+					print(f'Completed after {end-start}\n')
+				
+					if self.log_file:
+						with open(self.log_file, 'a') as f:
+							print(f'Completed after {end-start}\n', file=f)
 
 
 	# Ensemble initialisation methods

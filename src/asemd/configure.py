@@ -63,14 +63,25 @@ class Configure(object):
 					'Geometry from input file will be used, if any.'
 			)
 
-		if 'structure index' in self.mode_params:
-			self.STRUCTURE_INDEX = self.mode_params['structure index']
+		if 'structures' in self.mode_params:
+			self.structures = self.mode_params['structures']
+			self.structures = self.acquire_index_range(self.structures)
 		else:
 			if 'traj' in self.input_structure:
-				self.STRUCTURE_INDEX = -1
-				self.mode_params['structure index'] = self.STRUCTURE_INDEX
+				self.structures = -1
+				self.mode_params['structures'] = self.structures
 			else:
-				self.STRUCTURE_INDEX = False
+				self.structures = False
+
+
+		#if 'structure index' in self.mode_params:
+		#	self.structure_indices = self.mode_params['structure index']
+		#else:
+		#	if 'traj' in self.input_structure:
+		#		self.structure_indices = -1
+		#		self.mode_params['structure index'] = self.structure_indices
+		#	else:
+		#		self.structure_indices = False
 
 
 
@@ -98,7 +109,8 @@ class Configure(object):
 		#		self.atoms = [Atoms(a.symbols, a.get_positions(), cell=a.get_cell(), pbc=False) for a in atoms]
 
 
-		for a in self.atoms:
+		for i, a in enumerate(self.atoms):
+
 			# Terminate if no cell size in input
 			try:
 				a.set_cell(self.size)
@@ -165,7 +177,7 @@ class Configure(object):
 		"""
 		if 'traj' in self.input_structure:
 			# If file is trajecory, input
-			self.atoms = Trajectory(self.input_structure)[self.STRUCTURE_INDEX]
+			self.atoms = Trajectory(self.input_structure)[self.structure_indices]
 			self.atoms.calc = self.acquire_calc(self.calculator)
 			self.atoms.set_cell(self.size)
 			self.atoms.set_pbc(self.pbc)
@@ -226,12 +238,14 @@ class Configure(object):
 	def load_structure(self, filename):
 		"""Reads input files and stores them in an iterable list."""
 		if 'traj' in self.input_structure:
-			structure_list = [Trajectory(filename)[self.STRUCTURE_INDEX]]
+			#structure_list = [Trajectory(filename)[self.structure_indices]]
+			structure_list = [Trajectory(filename)]
 		else:
-			if self.STRUCTURE_INDEX:
-				structure_list = [read(filename, ':')[self.STRUCTURE_INDEX]]
-			else:
-				structure_list = read(filename, ':')
+			#if self.structure_indices:
+			#	structure_list = [read(filename, ':')[self.structure_indices]]
+			#else:
+			#	structure_list = read(filename, ':')
+			structure_list = read(filename, ':')
 
 		return structure_list
 	
@@ -291,7 +305,7 @@ class Configure(object):
 
 	def acquire_index_range(self, arg):
 		"""Converts a list of indices allowed for evaluation."""
-		arg = [acquire_index_set(a) for a in arg]
+		arg = [self.acquire_index_set(a) for a in arg]
 		tmp = []
 
 		# Converts a list to a complete set of indices and adds it to tmp
@@ -301,8 +315,8 @@ class Configure(object):
 				if len(x)<2:
 					pass
 				else:
-					subrange = [i for i in range(x[0], x[1]+1)]
+					subrange = [i+1 for i in range(x[0], x[1]+1)]
 				tmp += subrange
 			else:
-				tmp.append(x)
+				tmp.append(x+1)
 		return tmp

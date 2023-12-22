@@ -50,32 +50,34 @@ class EquationState(Configure):
 	def run(self):
 		"""Evaluates an equation of state on the given set of structures."""
 		for i, a in enumerate(self.atoms):
+			if i+1 in self.structures:
 
-			del a.calc
-			try:
-				a.calc = self.acquire_calc(self.calculator)
-			except:
-				self.error_msg(
-					'CRITICAL ERROR',
-					'Missing calculator!',
-					'Select EMT (for testing) or specify a python script that contains all calculator\ndefinitions by including:',
-					'Global/MODE:\n  calculator: EMT/name_of_script',
-					'in the YAML input file.'
-				)
-				sys.exit()
+				del a.calc
+				try:
+					a.calc = self.acquire_calc(self.calculator)
+				except:
+					self.error_msg(
+						'CRITICAL ERROR',
+						'Missing calculator!',
+						'Select EMT (for testing) or specify a python script that contains all calculator\ndefinitions by including:',
+						'Global/MODE:\n  calculator: EMT/name_of_script',
+						'in the YAML input file.'
+					)
+					sys.exit()
 
-			if len(self.atoms) > 1:
-				start = datetime.datetime.now()
-			
-			self.size_variation(i, a)
-			self.data[i] = self.run_eos(i, a)
-			
+				if len(self.atoms) > 1:
+					start = datetime.datetime.now()
+				
+				self.size_variation(i, a)
+				self.data[i] = self.run_eos(i, a)
 
-			if len(self.atoms) > 1:
-				end = datetime.datetime.now()
-				print(f'Structure {i+1} of ({len(self.atoms)}) completed after {end-start}\n')
+				if len(self.atoms) > 1:
+					end = datetime.datetime.now()
+					print(f'Structure {i+1} of ({len(self.atoms)}) completed after {end-start}\n')
 		
 		self.out = pd.DataFrame.from_dict(self.data, orient='index', columns=['V0 [Å^3]', 'E0 [eV]', 'B [GPa]'])
+		self.out.reindex(self.structures)
+		
 		if len(self.atoms) <= 100:
 			print(self.out.to_string())
 		else:

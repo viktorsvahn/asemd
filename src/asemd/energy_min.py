@@ -85,105 +85,105 @@ class EnergyMinimisation(Configure):
 			)
 
 		for i, a in enumerate(self.atoms):
-			self.printout = []
+			if i+1 in self.structures:
+				self.printout = []
 
-			del a.calc
-			try:
-				a.calc = self.acquire_calc(self.calculator)
-			except:
-				self.error_msg(
-					'CRITICAL ERROR',
-					'Missing calculator!',
-					'Select EMT (for testing) or specify a python script that contains all calculator\ndefinitions by including:',
-					'Global/MODE:\n  calculator: EMT/name_of_script',
-					'in the YAML input file.'
-				)
-				sys.exit()
+				del a.calc
+				try:
+					a.calc = self.acquire_calc(self.calculator)
+				except:
+					self.error_msg(
+						'CRITICAL ERROR',
+						'Missing calculator!',
+						'Select EMT (for testing) or specify a python script that contains all calculator\ndefinitions by including:',
+						'Global/MODE:\n  calculator: EMT/name_of_script',
+						'in the YAML input file.'
+					)
+					sys.exit()
 
-			if len(self.atoms) > 1:
-				start = datetime.datetime.now()		
-
-
-			# Initiate dynamic optimiser object
-			opt = global_vars.get(self.mode_params['optimiser'])
-			if self.log_file is None:
-				#self.dyn = opt(a, logfile='-')
-				self.dyn = opt(a)
-			else:	
-				self.dyn = opt(a, logfile=self.log_file)
-			
-
-			# Logging and saving
-			#if self.output_structure and 'traj' in self.output_structure:
-			#	print('FFODSHOSDFHSDFOHFGSDFOHNSDFS')
-			#	self.save_traj(a)
-			
-			#self.structure_info(a)
-			#self.dyn.attach(self.print_energy, interval=self.DUMP_INTERVAL)
-			if self.output_structure:
-				with open(self.log_file, 'a') as f:
-					if i != 0:
-						print('', file=f)
-					print(f'Structure: {i+1} (of {len(self.atoms)})', file=f)
+				if len(self.atoms) > 1:
+					start = datetime.datetime.now()		
 
 
-			# Run the minimisation
-			if (self.STEPS is None) and (self.FMAX is not None):
-				self.dyn.run(fmax=self.FMAX)
-	
-			elif (self.STEPS is not None) and (self.FMAX is None):
-				self.dyn.run(steps=self.FIRST_STEPS, fmax=1e-6)
-
-			elif (self.STEPS is not None) and (self.FMAX is not None):
-				self.dyn.run(steps=self.FIRST_STEPS, fmax=self.FMAX)
-
-			"""
-			# Run the minimisation
-			if (self.STEPS is None) and (self.FMAX is not None):
-				self.dyn.run(fmax=self.FMAX)
+				# Initiate dynamic optimiser object
+				opt = global_vars.get(self.mode_params['optimiser'])
+				if self.log_file is None:
+					#self.dyn = opt(a, logfile='-')
+					self.dyn = opt(a)
+				else:	
+					self.dyn = opt(a, logfile=self.log_file)
 				
 
+				# Logging and saving
+				#if self.output_structure and 'traj' in self.output_structure:
+				#	print('FFODSHOSDFHSDFOHFGSDFOHNSDFS')
+				#	self.save_traj(a)
+				
+				#self.structure_info(a)
+				#self.dyn.attach(self.print_energy, interval=self.DUMP_INTERVAL)
+				if self.output_structure:
+					with open(self.log_file, 'a') as f:
+						if i != 0:
+							print('', file=f)
+						print(f'Structure: {i+1} (of {len(self.atoms)})', file=f)
 
-			elif (self.STEPS is not None) and (self.FMAX is None):
-				self.dyn.run(steps=self.FIRST_STEPS)
-				for STEP in range(self.LAST_STEPS):
-					self.dyn.run()
-					fx, fy, fz = a.get_forces()[:,0], a.get_forces()[:,1], a.get_forces()[:,2]
-					forces = (fx**2 + fy**2 + fz**2)**0.5
-					energy = a.get_potential_energy()
 
-					eout = f'Potential energy: {energy:.4f}'
-					fout = f'max force: {max(forces):.4f}'
-					print(f'Step: {STEP+self.FIRST_STEPS+1}', eout, fout)
-
-
-			elif (self.STEPS is not None) and (self.FMAX is not None):
-				self.dyn.run(steps=self.FIRST_STEPS, fmax=self.FMAX)
-				for STEP in range(self.LAST_STEPS):
+				# Run the minimisation
+				if (self.STEPS is None) and (self.FMAX is not None):
 					self.dyn.run(fmax=self.FMAX)
-					fx, fy, fz = a.get_forces()[:,0], a.get_forces()[:,1], a.get_forces()[:,2]
-					forces = (fx**2 + fy**2 + fz**2)**0.5
-					energy = a.get_potential_energy()
 
-					eout = f'Potential energy: {energy:.4f}'
-					fout = f'max force: {max(forces):.4f}'
-					print(f'Step: {STEP+self.FIRST_STEPS+1}', eout, fout)
+				elif (self.STEPS is not None) and (self.FMAX is None):
+					self.dyn.run(steps=self.FIRST_STEPS, fmax=1e-6)
 
-			"""
+				elif (self.STEPS is not None) and (self.FMAX is not None):
+					self.dyn.run(steps=self.FIRST_STEPS, fmax=self.FMAX)
 
-			####### Inefficient! Need to extract this from the dyn object!
-			fx, fy, fz = a.get_forces()[:,0], a.get_forces()[:,1], a.get_forces()[:,2]
-			forces = (fx**2 + fy**2 + fz**2)**0.5
-			energy = a.get_potential_energy()
+				"""
+				# Run the minimisation
+				if (self.STEPS is None) and (self.FMAX is not None):
+					self.dyn.run(fmax=self.FMAX)
+					
 
-			eout = f'potential energy: {energy:.4f}'
-			fout = f'max force: {max(forces):.4f}'
-			print(f'Last out:\n{eout} {fout}')
-			
-			if len(self.atoms) > 1:
-				end = datetime.datetime.now()
-				#print(f'Potential energy: {energy:.4f} eV')
-				print(f'Completed after {end-start}\n')
+
+				elif (self.STEPS is not None) and (self.FMAX is None):
+					self.dyn.run(steps=self.FIRST_STEPS)
+					for STEP in range(self.LAST_STEPS):
+						self.dyn.run()
+						fx, fy, fz = a.get_forces()[:,0], a.get_forces()[:,1], a.get_forces()[:,2]
+						forces = (fx**2 + fy**2 + fz**2)**0.5
+						energy = a.get_potential_energy()
+
+						eout = f'Potential energy: {energy:.4f}'
+						fout = f'max force: {max(forces):.4f}'
+						print(f'Step: {STEP+self.FIRST_STEPS+1}', eout, fout)
+
+
+				elif (self.STEPS is not None) and (self.FMAX is not None):
+					self.dyn.run(steps=self.FIRST_STEPS, fmax=self.FMAX)
+					for STEP in range(self.LAST_STEPS):
+						self.dyn.run(fmax=self.FMAX)
+						fx, fy, fz = a.get_forces()[:,0], a.get_forces()[:,1], a.get_forces()[:,2]
+						forces = (fx**2 + fy**2 + fz**2)**0.5
+						energy = a.get_potential_energy()
+
+						eout = f'Potential energy: {energy:.4f}'
+						fout = f'max force: {max(forces):.4f}'
+						print(f'Step: {STEP+self.FIRST_STEPS+1}', eout, fout)
+
+				"""
+
+				####### Inefficient! Need to extract this from the dyn object!
+				fx, fy, fz = a.get_forces()[:,0], a.get_forces()[:,1], a.get_forces()[:,2]
+				forces = (fx**2 + fy**2 + fz**2)**0.5
+				energy = a.get_potential_energy()
+				
+				if len(self.atoms) > 1:
+					end = datetime.datetime.now()
+					print(f'Structure {i+1} of ({len(self.atoms)}) completed after {end-start}')
+
+				print(f'potential energy: {energy:.4f}')
+				print(f'max force: {max(forces):.4f}\n')
+				
 
 				if self.output_structure:
 					with open(self.log_file, 'a') as f:

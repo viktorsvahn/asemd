@@ -48,6 +48,7 @@ calculator:\t\tSpecifies the ASE calculator to be used. If using a custom
 #			Defaults to -1
 box size:\t\tWidth of the simulation box for x, y and z.
 periodic:\t\tBoolean for periodic boundary conditions.
+
 log path:\t\tPath to log file.
 
 MODE INPUT:
@@ -64,7 +65,7 @@ external stress:\tExternal stress tensor used in NPT ensembles.
 thermostat timescale:\tCharacteristic timescale of Nosé-Hoover thermostat (NPT).
 range:\t\t\tThe range used when fitting an eauation of state. Set start stop and
 \t\t\tnum-points.
-method\t\t\tThe equation of state method. Default is Birch-Murnaghan.
+method:\t\t\tThe equation of state method. Default is Birch-Murnaghan.
 '''
 	)
 	parser.add_argument(
@@ -91,11 +92,19 @@ method\t\t\tThe equation of state method. Default is Birch-Murnaghan.
 		help='Assigns a file with input paramters written in YAML format.'
 	)
 	parser.add_argument(
-		'-s',
-		'--structure',
+		'-i',
+		'--input',
 		dest='input_structure',
 		metavar='file.xyz',
 		help='Overrides global structure assigned in the input file with a custom\nfile. Possible to use .pdb and .traj in addition to .xyz-files.'
+	)
+	parser.add_argument(
+		'-s',
+		'--structures',
+		nargs='+',
+		dest='structures',
+		metavar='i1 i2 ...',
+		help='Specify the position/index of the structure(s) in an input file. Not\nzero-indexed and possible to select ranges using x-y.'
 	)
 	parser.add_argument(
 		'-o',

@@ -70,9 +70,13 @@ def main():
 	# CLI arguments have priority over the input file as a rule
 	if args.input_structure:
 		input_structure = args.input_structure
-		global_input['input structure'] = input_structure
+		global_input['input file'] = input_structure
 	else:
-		input_structure = global_input['input structure']
+		input_structure = global_input['input file']
+
+	if args.structures:
+		structure_indices = args.structures
+		mode_input['structures'] = structure_indices
 
 	if args.test == False:
 		if args.output:
@@ -334,7 +338,7 @@ def main():
 			'Running multiple instances of the same mode simultaneously will result in\noutputs being mixed up.',
 		)
 	
-	
+
 	setup.run()
 
 
