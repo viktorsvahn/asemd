@@ -75,8 +75,10 @@ def main():
 		input_structure = global_input['input file']
 
 	if args.structures:
-		structures = args.structures
+		structures = ''.join(args.structures)
+		print(type(structures))
 		mode_input['structures'] = structures
+
 
 	if args.test == False:
 		if args.output:

@@ -101,7 +101,10 @@ class Configure(object):
 		#		self.atoms = [Atoms(a.symbols, a.get_positions(), cell=a.get_cell(), pbc=False) for a in atoms]
 
 		if 'structures' in self.mode_params:
-			self.structures = mode_params['structures'].split(' ')
+			#self.structures = str(mode_params['structures'])
+			self.structures = mode_params['structures']
+			print(type(self.structures))
+			self.structures = self.structures.split(' ')
 			self.structures = self.acquire_index_range(self.structures)
 		else:
 			if 'traj' in self.input_structure:
@@ -332,7 +335,7 @@ class Configure(object):
 				if len(x)<2:
 					pass
 				else:
-					subrange = [i for i in range(x[0], x[1]+1)]
+					subrange = [i-1 for i in range(x[0], x[1]+1)]
 				tmp += subrange
 			else:
 				tmp.append(x)
