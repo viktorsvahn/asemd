@@ -10,11 +10,11 @@ python3 -m pip install .
 ```
 
 ## Running
-Once installed and having generated an input file in some direcotry that also contain a starting structure, the user may run, e.g.,
+Once installed and having generated a config file in some direcotry that also contain starting structures, the user may run, e.g.,
 ```
-asemd NVE input.in (--test)
+asemd NVE config.in (--test)
 ```
-to run an NVE simulation using the settings from the input file. The test-flag ensures that neither logs nor structure files are saved.
+to run an NVE simulation using the settings from the file `config.in`. The test-flag ensures that neither logs nor structure files are saved and is used for testing purposes.
 
 For additional information surrounding this package, please use
 ```
@@ -25,11 +25,12 @@ which includes a more in-depth user guide.
 ## Input file
 THe input file is written in the YAML format which is human readable and intuitive. Each input file consist of at least two sections---Global and EMIN/SP/NVE/NVT/NPT. The global section contains global variables such as an input structure, geometry of the simulation enviroment and whether or not periodic boundary conditions are to be used (bool). The next section has information regarding the simulation mode (EMIN or ensemble), written in capital letters. This section includes temperature, time steps, what calculator is going to be used etc. Each section ends with a ':' and all variables underneath it must be indented by 2 or 4 spaces. Variables and values should also be separated by a ':'.
 
-An example of a basic input is:
+An example of a basic config is:
 ```
 Global:
   input structure: input.pdb
   box size: 10 10 10
+  periodic: True
 
 EMIN:
   optimiser: MDMin
@@ -38,13 +39,13 @@ EMIN:
   output: emin.pdb
 
 SP:
-  calculator: EMT
+  calculator: some_calc_script
   evaluate:
     - forces
   output: forces.xyz
 
 NVE:
-  calculator: EMT
+  calculator: some_calc_script
   steps: 10
   temperature: 300
   time step: 2
@@ -52,4 +53,7 @@ NVE:
 ```
 The different extensions used in this example shows what possibilitites there are and do not imply any restrictions related to the different modes. The order in which parameters appear is arbitrary. Further, **please note** that the EMT calculator is just used as an example and should not really be used for anything other than making sure that the system runs.
 
-For more info on how the package is built, please refere to the wiki page.
+Calculator scripts must include a `calculator` variable that defines a calculator object of choice, just
+like one would define an EMT calculator.
+
+For more info on how the package is built, please refer to the wiki page.
