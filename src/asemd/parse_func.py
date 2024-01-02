@@ -6,7 +6,7 @@ from importlib.metadata import version
 # Indentation with two spaces will result in a match with argparse in general
 desc = f'''To run this script, call e.g.,
 
-$ asemd NVE input.in 
+$ asemd NVE config.in 
 
 which will run an NVE ensemble simulation using the parameters in the config 
 file, which must be written in YAML format. See example below.'''
