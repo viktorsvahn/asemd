@@ -90,6 +90,8 @@ MODE INPUT:
   method:               The equation of state method. Default is Birch-Murnaghan.
 '''
 
+# These statements are indented in the console and should break lines after
+# only 56 characters.
 version_help = f'\
 asemd ver. {version("asemd")}'
 
