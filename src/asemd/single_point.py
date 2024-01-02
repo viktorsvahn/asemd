@@ -121,7 +121,7 @@ class SinglePoint(Configure):
 					print(f'Potential energy: {energy:.4f} eV')
 					print(f'Structure {i+1} of ({len(self.atoms)}) completed after {end-start}\n')
 			
-			del a.calc
+				del a.calc
 
 		#print(self.data)
 		self.out = pd.DataFrame.from_dict(self.data, orient='index')
