@@ -92,76 +92,78 @@ MODE INPUT:
 
 # These statements are indented in the console and should break lines after
 # only 56 characters.
+#-------------------------------------------------------
 version_help = f'\
 asemd ver. {version("asemd")}'
-
+#-------------------------------------------------------
 test_help = '''\
 This flag hinders all output files and is only used for
 testing.'''
-
+#-------------------------------------------------------
 mode_help = '''\
 Sets the run-mode to EMIN, SP, EOS, NVE, NVT or NPT.'''
-
+#-------------------------------------------------------
 config_help = '''\
-Assigns a file with input paramters written in YAML format.'''
-
+Assigns a file with input paramters written in YAML
+format.'''
+#-------------------------------------------------------
 input_help = '''\
-Overrides global structure assigned in the input file with
-a custom file. Possible to use .pdb and .traj in addition 
-to .xyz-files.'''
-
+Overrides global structure assigned in the input file 
+with a custom file. Possible to use .pdb and .traj in 
+addition to .xyz-files.'''
+#-------------------------------------------------------
 structures_help = '''\
 Specify the position/index of the structure(s) in an 
 input file. Not zero-indexed and possible to select 
 ranges using x-y.'''
-
+#-------------------------------------------------------
 output_help = '''\
 Overrides output name. Possible to use .pdb and .traj
 in addition to .xyz-files.'''
-
+#-------------------------------------------------------
 optimiser_help = '''\
 Overrides the optimiser specified in the input file. 
 Only for EMIN.'''
-
+#-------------------------------------------------------
 name_help = '''\
 Overrides the name in the output file (if any). Not for 
 EMIN.'''
-
+#-------------------------------------------------------
 dump_interval_help = '''
 Overrides the dump interval in the input file.'''
-
+#-------------------------------------------------------
 start_index_help = '''\
 Overrides the starting index of trajectory inputs. If
 starting from last dump, set -1.'''
-
+#-------------------------------------------------------
 steps_help = '''\
 Overrides the number of steps in the input.'''
-
+#-------------------------------------------------------
 fmax_help = '''\
 Overrides the force criteria used during energy mini-
 misation.'''
-
+#-------------------------------------------------------
 temperature_help = '''\
 Override input temperature (K).'''
-
+#-------------------------------------------------------
 time_step_help = '''\
 Overrides the time step of the input file (fs).'''
-
+#-------------------------------------------------------
 friction_help = '''\
 Overrides the friction constant used in the NVT ensemble
 (fs).'''
-
+#-------------------------------------------------------
 pfactor_help = '''\
 Overrides the pfactor used in the NPT ensemble (bar).'''
-
+#-------------------------------------------------------
 timescale_help = '''\
 Overrides the characteristic timescale used in the NPT
 ensemble (fs).'''
-
+#-------------------------------------------------------
 stress_help = '''\
 Overrides the external stress tensor used in the NPT
 ensemble.'''
-
+#-------------------------------------------------------
 
 
 def create_parser():
