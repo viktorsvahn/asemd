@@ -136,12 +136,6 @@ def create_parser():
 		help=output_help
 	)
 	parser.add_argument(
-		'-n',
-		'--name',
-		metavar='name',
-		help=name_help
-	)
-	parser.add_argument(
 		'--start',
 		dest='STARTING_INDEX',
 		help=start_index_help
