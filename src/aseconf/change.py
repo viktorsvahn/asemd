@@ -62,7 +62,8 @@ class ChangeHeader(Configure):
 			else:
 				pass
 
-		self.save_structure(self.atoms, append=False)
+		if self.output_structure:
+			self.save_structure(self.atoms, append=False)
 
 
 
