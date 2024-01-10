@@ -26,6 +26,11 @@ Global:
 CH:
   header file: different_input.xyz
   output: output.xyz
+  structures: 1-3 5 (apply on first to third, and fifth structure)
+  transfer info:
+    - some_info_type
+  add info:
+    new: info (will add new=info to header)
 -----------------------------
 
 GLOBAL INPUT:
@@ -35,6 +40,12 @@ MODE INPUT:
   header file:          File that contains new headers to replace those in the 
                         input.xyz file.
   output:               Name of output file with extention.
+  structures:           Set structure indices (not zero indexed) that will be 
+                        evaluated, e.g. 1 5 8-10.
+  transfer info:        List of info tags that are to be transfered from the header file
+                        to the input file.
+  add info:             Indented definitions that should be added as info tags
+                        to the input file.
 '''
 
 # These statements are indented in the console and should break lines after
@@ -68,50 +79,10 @@ output_help = '''\
 Overrides output name. Possible to use .pdb and .traj
 in addition to .xyz-files.'''
 #-------------------------------------------------------
-optimiser_help = '''\
-Overrides the optimiser specified in the input file. 
-Only for EMIN.'''
-#-------------------------------------------------------
-name_help = '''\
-Overrides the name in the output file (if any). Not for 
-EMIN.'''
-#-------------------------------------------------------
-dump_interval_help = '''
-Overrides the dump interval in the input file.'''
-#-------------------------------------------------------
 start_index_help = '''\
 Overrides the starting index of trajectory inputs. If
 starting from last dump, set -1.'''
 #-------------------------------------------------------
-steps_help = '''\
-Overrides the number of steps in the input.'''
-#-------------------------------------------------------
-fmax_help = '''\
-Overrides the force criteria used during energy mini-
-misation.'''
-#-------------------------------------------------------
-temperature_help = '''\
-Override input temperature (K).'''
-#-------------------------------------------------------
-time_step_help = '''\
-Overrides the time step of the input file (fs).'''
-#-------------------------------------------------------
-friction_help = '''\
-Overrides the friction constant used in the NVT ensemble
-(fs).'''
-#-------------------------------------------------------
-pfactor_help = '''\
-Overrides the pfactor used in the NPT ensemble (bar).'''
-#-------------------------------------------------------
-timescale_help = '''\
-Overrides the characteristic timescale used in the NPT
-ensemble (fs).'''
-#-------------------------------------------------------
-stress_help = '''\
-Overrides the external stress tensor used in the NPT
-ensemble.'''
-#-------------------------------------------------------
-
 
 def create_parser():
 	parser = argparse.ArgumentParser(
@@ -135,7 +106,7 @@ def create_parser():
 	parser.add_argument(
 		'mode',
 		metavar='mode',
-		choices=['EMIN', 'SP', 'EOS', 'NVE', 'NVT', 'NPT', 'CH'],
+		choices=['CH'],
 		help=mode_help
 	)
 	parser.add_argument(
@@ -164,13 +135,6 @@ def create_parser():
 		metavar='file.xyz',
 		help=output_help
 	)
-
-	parser.add_argument(
-		'-opt',
-		'--optimiser',
-		metavar='optimiser',
-		help=optimiser_help
-	)
 	parser.add_argument(
 		'-n',
 		'--name',
@@ -178,62 +142,9 @@ def create_parser():
 		help=name_help
 	)
 	parser.add_argument(
-		'--dump',
-		dest='DUMP_INTERVAL',
-		help=dump_interval_help
-	)
-	parser.add_argument(
 		'--start',
 		dest='STARTING_INDEX',
 		help=start_index_help
 	)
-
-	parser.add_argument(
-		'--steps',
-		dest='STEPS',
-		help=steps_help
-	)
-	parser.add_argument(
-		'--fmax',
-		dest='FMAX',
-		help=fmax_help
-	)
-	parser.add_argument(
-		'--temp',
-		dest='TEMPERATURE',
-		help=temperature_help
-	)
-	parser.add_argument(
-		'--time-step',
-		dest='TIME_STEP',
-		help=time_step_help
-	)
-	parser.add_argument(
-		'--friction',
-		dest='FRICTION',
-		help=friction_help
-	)
-	parser.add_argument(
-		'--pfactor',
-		dest='PFACTOR',
-		help=pfactor_help
-	)
-	parser.add_argument(
-		'--timescale',
-		dest='CHARACTERSISTIC_TIMESCALE',
-		help=timescale_help
-	)
-	parser.add_argument(
-		'--stress',
-		dest='external_stress',
-		metavar='external_stress',
-		help=stress_help
-	)
-	#parser.add_argument(
-	#	'--range',
-	#	dest='eos_range',
-	#	metavar='start stop num-points',
-	#	help='Overrides the scaling range used in equation of state determination,\ne.g. 0.95 1.05 5.'
-	#)
 
 	return parser
