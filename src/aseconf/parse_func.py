@@ -6,88 +6,35 @@ from importlib.metadata import version
 # Indentation with two spaces will result in a match with argparse in general
 desc = f'''To run this script, call e.g.,
 
-$ asemd NVE config.in 
+$ aseconf CH config.in 
 
-which will run an NVE ensemble simulation using the parameters in the config 
-file, which must be written in YAML format. See example below.'''
+which will change the headers of the specified input structure file to those 
+present in another file, using the parameters in the config.in file, which must 
+be written in YAML format. See example below.'''
 
 epi = '''
-This script is used to run MD simulations, single point calcualtions, equation
-of state and energy minimisations using the atomic simulation environment (ASE).
-The purpose of this program is to provide a means for running different types 
-of evaluation modes using only one script and using a single configuration file,
-regardless of simulation mode. The program is run from a terminal similar to 
-GROMACS.
-
-The config file should include titles for each set of variables, global- and at 
-least one more mode/ensemble. Under each category, a set of input parameters
-should be indented by 2 or 4 spaces (consitency is important). The setting- and 
-parameter should be separated by ':'.
+This script is used to configure structure files, such as changing or altering 
+the headers of ase structure files. The config file should include titles for 
+each set of variables, global- and at least one mode. Under each category, a 
+set of input parameters should be indented by 2 or 4 spaces (consitency is 
+important). The setting- and parameter should be separated by ':'.
 
 ----------Example------------
 Global:
   input file: input.xyz
-  calculator: some_definition_script
-  box size: 10 10 10
-  periodic: True
-  overwrite: False
-  log path: logs/
 
-EMIN:
-  name: test_name
-  optimiser: BFGS
-  fmax: 0.05
-  steps: 100
-  output: relaxed.xyz
-
-NVT:
-  name: test_name
-  temperature: 300
-  friction: 0.01
-  time step: 2
-  steps: 100
-  dump interval: 2
-  output: nvt_300K.traj
-
-EOS:
-  name: test
-  range: 0.95 1.05 10
-  method: Birch-Murnaghan
-  output: eos.traj
+CH:
+  header file: different_input.xyz
+  output: output.xyz
 -----------------------------
 
 GLOBAL INPUT:
   input structure:      Specifies the starting structure.
-  calculator:           Specifies the ASE calculator to be used. If using a 
-                        custom calculator, this should be the name of a python 
-                        script that contain the proper calculator definition.
-  box size:             Width of the simulation box for x, y and z.
-  periodic:             Boolean for periodic boundary conditions.
-  overwrite:            Boolean for wheter or not outputs should overwrite 
-                        previous files with the same name.
-  log path:             Path to log file.
 
 MODE INPUT:
-  optimiser:            Minimisation optimiser. Choose between BFGS, GPMin or 
-                        MDMin.
+  header file:          File that contains new headers to replace those in the 
+                        input.xyz file.
   output:               Name of output file with extention.
-  temperature:          Specifies the temperature in Kelvin used in simulations.
-  time step:            Width of the time step in fs.
-  steps:                Number of simulation steps.
-  dump interval:        Coordinate dump interval for output.
-  structures:           Set structure indices (not zero indexed) that will be 
-                        evaluated, e.g. 1 5 8-10.
-  name:                 Specifies the name of a particular run in the log file.
-  friction:             Sets the friction constant for the Langevin thermostat 
-                        (NVT).
-  pfactor:              The pressure factor used for a parrinello-Rahman 
-                        barostat (NPT).
-  external stress:      External stress tensor used in NPT ensembles.
-  thermostat timescale: Characteristic timescale of a Nosé-Hoover thermostat 
-                        (NPT).
-  range:                The range used when fitting an eauation of state. Set 
-                        start stop and num-points.
-  method:               The equation of state method. Default is Birch-Murnaghan.
 '''
 
 # These statements are indented in the console and should break lines after

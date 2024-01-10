@@ -135,7 +135,8 @@ class MolecularDynamics(Configure):
 					if self.log_file:
 						with open(self.log_file, 'a') as f:
 							print(f'Completed after {end-start}\n', file=f)
-			del a.calc
+			
+			del self.atoms[i].calc
 
 
 	# Ensemble initialisation methods

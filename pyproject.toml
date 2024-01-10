@@ -34,3 +34,4 @@ repository = "https://github.com/viktorsvahn/asemd"
 
 [project.scripts]
 asemd = "asemd.__main__:main"
+aseconf = "aseconf.__main__:main"

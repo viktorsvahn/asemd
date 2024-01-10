@@ -58,7 +58,8 @@ modes = {
 	'EOS':'Equation of state',
 	'NVE':'Microcanonical ensemble',
 	'NVT':'Canonical ensemble',
-	'NPT':'Isobaric ensemble'
+	'NPT':'Isobaric ensemble',
+	'CH':'Changes structure headers',
 }
 
 # Removes case-sensitivity from mode-input parameters
@@ -192,6 +193,7 @@ def main():
 			path+input_structure,
 			output_structure
 		)
+
 	
 
 	# INITIALISE ENSEMBLE VARIABLES ###########################################

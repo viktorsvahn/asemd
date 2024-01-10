@@ -27,42 +27,6 @@ class Configure(object):
 		self.input_structure = input_structure
 		self.output_structure = output_structure	
 
-		self.print_energy_gate = False
-
-		# Switch that allows one to force new output files to overwrite old ones
-		# with identical names
-		if 'overwrite' in self.global_params:
-			self.overwrite = self.global_params['overwrite']
-		else:
-			self.overwrite = False
-			self.global_params['overwrite'] = self.overwrite
-
-		# Raise error if no calcualtor has been specified
-		if 'calculator' in self.mode_params:
-			self.calculator = self.mode_params['calculator']
-		elif 'calculator' in self.global_params:
-			self.calculator = self.global_params['calculator']
-		else:
-			# This is used to produce an error
-			self.calculator = False
-
-		# Collect geometry variables and indices
-		if 'periodic' in self.global_params:
-			self.pbc = self.global_params['periodic']
-		else:
-			self.pbc = False
-			self.mode_params['periodic'] = self.pbc
-
-		if 'box size' in self.global_params:
-			size = global_params['box size'].split(' ')
-			self.size = [float(s) for s in size]
-		else:
-			self.size = False
-			self.error_msg(
-				'Warning',
-				'No geometry was set in the input.',
-				'Geometry from input file will be used, if any.'
-			)
 
 
 
@@ -115,13 +79,7 @@ class Configure(object):
 				self.structures = [_ for _ in range(len(self.atoms))]
 
 		#self.structures = self.mode_params['structures']
-		
-		if 'traj' in self.input_structure:
-			self.structures = -1
-			self.STRUCTURE_INDEX = -1
-			self.mode_params['structures'] = self.structures
-
-
+		"""
 		for i, a in enumerate(self.atoms):
 			if i+1 in self.structures:
 
@@ -135,7 +93,7 @@ class Configure(object):
 
 					#self.error_msg(
 					#	'CRITICAL ERROR',
-					#	'Input file contains no cell parameters!',§
+					#	'Input file contains no cell parameters!',
 					#	'Please set cell size (Å) manually by adding:',
 					#	'Global:\n  box size:  x y z',
 					#	'to the YAML input file.'
@@ -157,30 +115,10 @@ class Configure(object):
 				#		'in the YAML input file.'
 				#	)
 				#	sys.exit()
+		"""
 
 
-		# If previous output exist, create new files datetime handle
-		if self.output_structure and (
-			os.path.exists(self.output_structure)):
-			
-			if self.overwrite:
-				os.remove(self.output_structure)
-			else:
-				# Adds datetime infor just before extension if filename is taken
-				ext = self.output_structure.split('.')[-1]
-				new_filename = self.output_structure.replace('.'+ext, '')
-				new_filename += '_'+time.strftime("%Y%m%d-%H%M%S")+'.'+ext
 
-				self.error_msg(
-					'Warning:',
-					f'Target output file {self.output_structure} already exist.',
-					f'Created a new outfile called {new_filename}'
-				)
-				self.output_structure = new_filename
-				self.mode_params['output'] = self.output_structure
-
-		else:	
-			pass
 
 
 		# Input will only be read as a traj if name includes correct extension
@@ -241,20 +179,6 @@ class Configure(object):
 
 
 
-	def acquire_calc(self, filename='EMT'):
-		"""Method that acquires a chose calculator. If no argument is passed,
-		the method will arbitrarily choose the EMT calculator used for testing 
-		purposes. 
-
-		The calculator used for actual simulations should be defined
-		in a separate python script. To choose such a calculator, this method
-		should be passed with the name of the script as an argument."""
-		if filename == (None or 'EMT'):
-			calculator = EMT()
-		else:
-			calculator = __import__(filename).calculator
-		return calculator
-
 	def load_structure(self, filename):
 		"""Reads input files and stores them in an iterable list."""
 		if 'traj' in self.input_structure:
@@ -270,18 +194,6 @@ class Configure(object):
 		return structure_list
 	
 
-	def print_energy(self, atoms=None):
-		"""Print potential-, kinetic energy (together with temperature) and the 
-		total energy of the system.
-		"""
-		if atoms is None:
-			atoms = self.atoms
-
-		epot = atoms.get_potential_energy()/len(atoms)
-		ekin = atoms.get_kinetic_energy()/len(atoms)
-		etot = epot + ekin
-		temp = ekin/(1.5*units.kB)
-		print(f'Energy per atom: Epot: {epot:.4f} eV, Ekin: {ekin:.4f} eV (T: {temp:3.0f} K), Etot: {etot:.4} eV')
 
 	def error_msg(self, *args):
 		"""Envelopes (and prints) error messages with lines and adds empty 
