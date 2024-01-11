@@ -57,9 +57,12 @@ class ChangeHeader(Configure):
 					
 					transfer_info_dict = {}
 					for item in transfer_info:
-						transfer = a.info[item]
-						self.atoms[i].info[item] = transfer
-						transfer_info_dict[item] = transfer
+						try:
+							transfer = a.info[item]
+							self.atoms[i].info[item] = transfer
+							transfer_info_dict[item] = transfer
+						except:
+							print(f'Transfer of {item} in structure {i+1} (of {len(self.atoms)}) failed')
 					self.transfered_info[i+1] = transfer_info_dict
 
 				# Transfer arrays between files
@@ -69,9 +72,12 @@ class ChangeHeader(Configure):
 
 					transfer_arrays_dict = {}
 					for item in transfer_arrays:
-						transfer = a.arrays[item]
-						self.atoms[i].arrays[item] = transfer
-						transfer_arrays_dict[item] = 'True'
+						try:
+							transfer = a.arrays[item]
+							self.atoms[i].arrays[item] = transfer
+							transfer_arrays_dict[item] = 'True'
+						except:
+							print(f'Transfer of {item} in structure {i+1} (of {len(self.atoms)}) failed')
 					self.transfered_arrays[i+1] = transfer_arrays_dict
 
 				# Add new items to info
