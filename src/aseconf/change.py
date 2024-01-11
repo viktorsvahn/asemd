@@ -70,7 +70,7 @@ class ChangeHeader(Configure):
 					transfer_arrays_dict = {}
 					for item in transfer_arrays:
 						transfer = a.arrays[item]
-						self.atoms[i].info[item] = transfer
+						self.atoms[i].arrays[item] = transfer
 						transfer_arrays_dict[item] = 'True'
 					self.transfered_arrays[i+1] = transfer_arrays_dict
 
