@@ -106,10 +106,9 @@ class ChangeHeader(Configure):
 		if len(self.structures) <= 100:
 			print(out.to_string())
 		else:
-			print(self.structures)
+			print(out)
 			print(
-				f'Transfered {0} in {len(self.structures)} (of {len(self.atoms)}) structures',
-				'',
+				f'Altered data in {len(self.structures)} (of {len(self.atoms)}) structures.',
 			)
 
 		# Save output structure with altered headers
