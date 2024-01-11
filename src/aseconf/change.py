@@ -46,6 +46,9 @@ class ChangeHeader(Configure):
 		tags as specifiged in the config file."""
 		# output data is stored as nested dicts to allow for the tracking of
 		# unique indices, for each transfered/added info tag.
+		TRANSFER_INFO_COUNT = 0
+		TRANSFER_ARRAYS_COUNT = 0
+		ADD_COUNT = 0
 
 		for i, a in enumerate(self.header_structures):
 			if i in self.structures:
@@ -61,6 +64,7 @@ class ChangeHeader(Configure):
 							transfer = a.info[item]
 							self.atoms[i].info[item] = transfer
 							transfer_info_dict[item] = transfer
+							TRANSFER_INFO_COUNT += 1
 						except:
 							print(f'Transfer of {item} in structure {i+1} (of {len(self.atoms)}) failed')
 					self.transfered_info[i+1] = transfer_info_dict
@@ -76,6 +80,7 @@ class ChangeHeader(Configure):
 							transfer = a.arrays[item]
 							self.atoms[i].arrays[item] = transfer
 							transfer_arrays_dict[item] = 'True'
+							TRANSFER_ARRAYS_COUNT += 1
 						except:
 							print(f'Transfer of {item} in structure {i+1} (of {len(self.atoms)}) failed')
 					self.transfered_arrays[i+1] = transfer_arrays_dict
@@ -90,6 +95,7 @@ class ChangeHeader(Configure):
 						add = add_items[item]
 						self.atoms[i].info[item] = add
 						add_dict[item] = add
+						ADD_COUNT += 1
 					self.added_data[i+1] = add_dict
 
 			else:
@@ -112,9 +118,11 @@ class ChangeHeader(Configure):
 		if len(self.structures) <= 100:
 			print(out.to_string())
 		else:
-			print(out)
-			print(
+			#print(out, '\n')
+			print()
+			self.error_msg(
 				f'Altered data in {len(self.structures)} (of {len(self.atoms)}) structures.',
+				f'{TRANSFER_INFO_COUNT} info transfers\n{TRANSFER_ARRAYS_COUNT} array transfers\n{ADD_COUNT} additions',
 			)
 
 		# Save output structure with altered headers
