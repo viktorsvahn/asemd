@@ -67,7 +67,7 @@ class Configure(object):
 		if 'structures' in self.mode_params:
 			#self.structures = str(mode_params['structures'])
 			self.structures = mode_params['structures']
-			print(type(self.structures))
+			#print(type(self.structures))
 			self.structures = self.structures.split(' ')
 			self.structures = self.acquire_index_range(self.structures)
 		else:
@@ -218,6 +218,7 @@ class Configure(object):
 			for handle in info_keys:
 				print(f'{handle}: {info[handle]}')
 
+
 	def acquire_index_set(self, arg):
 		"""Converts a list of strings into a list of ranges and indices.
 
@@ -228,10 +229,10 @@ class Configure(object):
 		# Non-hyphenated values are treated as single indices
 		if '-' in arg:
 			arg = arg.split('-')
-			for i,x in enumerate(arg):
+			for i, x in enumerate(arg):
 				arg[i] = int(x)
 		else:
-			arg = int(arg)
+			arg = int(arg)-1
 		indices = arg
 		return indices
 
