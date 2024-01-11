@@ -22,7 +22,7 @@ class ChangeHeader(Configure):
 		if 'add info' in self.mode_params:
 			pass
 
-		if 'transfer info' in self.mode_params:
+		if 'transfer info' or 'transfer arrays' in self.mode_params:
 			# Load file containing the header
 			try:
 				self.header_structures = self.load_structure(self.mode_params['header file'])
