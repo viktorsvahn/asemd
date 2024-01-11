@@ -123,6 +123,9 @@ class SinglePoint(Configure):
 			
 				del a.calc
 
+		#print(len(self.structures))
+		#print(self.structures)
+
 		#print(self.data)
 		self.out = pd.DataFrame.from_dict(self.data, orient='index')
 		if len(self.structures) <= 100:

@@ -103,7 +103,7 @@ class Configure(object):
 		if 'structures' in self.mode_params:
 			#self.structures = str(mode_params['structures'])
 			self.structures = mode_params['structures']
-			print(type(self.structures))
+			#print(type(self.structures))
 			self.structures = self.structures.split(' ')
 			self.structures = self.acquire_index_range(self.structures)
 		else:
@@ -135,7 +135,7 @@ class Configure(object):
 
 					#self.error_msg(
 					#	'CRITICAL ERROR',
-					#	'Input file contains no cell parameters!',§
+					#	'Input file contains no cell parameters!',
 					#	'Please set cell size (Å) manually by adding:',
 					#	'Global:\n  box size:  x y z',
 					#	'to the YAML input file.'
@@ -319,7 +319,7 @@ class Configure(object):
 			for i,x in enumerate(arg):
 				arg[i] = int(x)
 		else:
-			arg = int(arg)
+			arg = int(arg)-1
 		indices = arg
 		return indices
 
@@ -339,4 +339,5 @@ class Configure(object):
 				tmp += subrange
 			else:
 				tmp.append(x)
+		#print(tmp)
 		return tmp
