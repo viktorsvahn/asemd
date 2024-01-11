@@ -36,7 +36,8 @@ class ChangeHeader(Configure):
 				)
 				sys.exit()
 
-		self.transfered_data = {}
+		self.transfered_info = {}
+		self.transfered_arrays = {}
 		self.added_data = {}
 
 
@@ -52,14 +53,26 @@ class ChangeHeader(Configure):
 				# Transfer info items between files
 				if ('transfer info' in self.mode_params) and (
 					self.mode_params['transfer info'] is not None):
-					transfer_items = set(self.mode_params['transfer info'])
+					transfer_info = set(self.mode_params['transfer info'])
 					
-					transfer_dict = {}
-					for item in transfer_items:
+					transfer_info_dict = {}
+					for item in transfer_info:
 						transfer = a.info[item]
 						self.atoms[i].info[item] = transfer
-						transfer_dict[item] = transfer
-					self.transfered_data[i+1] = transfer_dict
+						transfer_info_dict[item] = transfer
+					self.transfered_info[i+1] = transfer_info_dict
+
+				# Transfer arrays between files
+				if ('transfer arrays' in self.mode_params) and (
+					self.mode_params['transfer arrays'] is not None):
+					transfer_arrays = set(self.mode_params['transfer arrays'])
+
+					transfer_arrays_dict = {}
+					for item in transfer_arrays:
+						transfer = a.arrays[item]
+						self.atoms[i].info[item] = transfer
+						transfer_arrays_dict[item] = 'True'
+					self.transfered_arrays[i+1] = transfer_arrays_dict
 
 				# Add new items to info
 				if ('add info' in self.mode_params) and (
@@ -77,20 +90,18 @@ class ChangeHeader(Configure):
 				pass
 
 		# Stack and print output to stdout
-		transfer_out = pd.DataFrame.from_dict(self.transfered_data, orient='index')
+		transfer_info_out = pd.DataFrame.from_dict(self.transfered_info, orient='index')
+		transfer_arrays_out = pd.DataFrame.from_dict(self.transfered_arrays, orient='index')
 		add_out = pd.DataFrame.from_dict(self.added_data, orient='index')
-		out = {
-			'Transfered tags':transfer_out,
-			'Added tags':add_out,
-		}
+		
 		# Create multilevel datafram using concatenation
+		out = {
+			'Added tags':add_out,
+			'Transfered tags':transfer_info_out,
+			'Transfered arrays':transfer_arrays_out,
+		}
 		out = pd.concat(out, axis=1)
 		
-
-		# USESD FOR DEBUGGING
-		#print(self.structures)
-
-
 
 		if len(self.structures) <= 100:
 			print(out.to_string())

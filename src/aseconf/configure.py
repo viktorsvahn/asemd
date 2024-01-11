@@ -243,7 +243,7 @@ class Configure(object):
 
 		# Converts a list to a complete set of indices and adds it to tmp
 		# If element is non-list type, add single element to tmp
-		for x in arg:
+		for x in arg:	
 			if type(x) is list:
 				if len(x)<2:
 					pass
