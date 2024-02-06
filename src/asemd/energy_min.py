@@ -47,9 +47,9 @@ class EnergyMinimisation(Configure):
 
 
 		# NOT IMPLEMENTED
-		FRAC = 0.15
-		self.LAST_STEPS = math.ceil(self.STEPS*FRAC)
-		self.FIRST_STEPS = self.STEPS - self.LAST_STEPS
+		#FRAC = 0.15
+		#self.LAST_STEPS = math.ceil(self.STEPS*FRAC)
+		#self.FIRST_STEPS = self.STEPS - self.LAST_STEPS
 		#print(FIRST_STEPS, LAST_STEPS)
 
 		
